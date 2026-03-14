@@ -1,37 +1,16 @@
-# Python cache / build files
-*__pycache__*
-*.py[cod]
-*.pyo
-*.pyd
-*.so
-*.egg-info/
-*.egg
-*.log
+save_files/
+
+__pycache__/
+
+# Ignore all .pyc files
 *.pyc
 
-# Virtual environment
-myenv/
+# Ignore all log files
+*.log
 
-# Django specific
-db.sqlite3
-*.sqlite3
-
-# Migration files (optional, agar har env me recreate karna chahte ho)
-**/migrations/
-!**/migrations/__init__.py   # init file keep so Django treats it as a package
-
-# IDE / Editor settings
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-
-#
+# Ignore all .env files
 *.env
-media/
-ra_testing/meida/
+
+.png
+.jpg
+
