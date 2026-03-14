@@ -1,0 +1,568 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RA Testing</title>
+    {% comment %}
+    <link rel="stylesheet" href="{% static 'ra_testing/styles.css' %}"> {% endcomment %}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --gradient-1: rgb(255, 255, 255);
+            --gradient-2: rgb(226, 226, 226);
+            --gradient-3: rgb(212, 212, 212);
+            --gradient-4: rgb(198, 198, 198);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --text-color: #000;
+            --header-text: #fff;
+            --span-color: rgba(243, 210, 109, 1);
+            --container-bg: rgba(200, 200, 200, 0.5);
+            --container-shadow: rgba(160, 160, 160, 0.5);
+            --btn-bg: #437383;
+            --btn-text: #fff;
+            --btn-hover-bg: #72A2B3;
+            --btn-hover-text: #000;
+            --input-bg: rgba(200, 200, 200, 0.5);
+            --input-border: #ccc;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --gradient-1: #1a1a1a;
+            --gradient-2: #181818;
+            --gradient-3: #141414;
+            --gradient-4: #0d0d0d;
+            --header-bg: rgba(30, 30, 30, 0.95);
+            --text-color: #e0e0e0;
+            --header-text: #e0e0e0;
+            --span-color: #F3D26D;
+            --container-bg: rgba(28, 28, 28, 0.85);
+            --container-shadow: rgba(0, 0, 0, 0.6);
+            --btn-bg: #437383;
+            --btn-text: #e0e0e0;
+            --btn-hover-bg: #3a3a3a;
+            --btn-hover-text: #fff;
+            --input-bg: rgba(28, 28, 28, 0.8);
+            --input-border: #333;
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            position: relative;
+            z-index: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--gradient-1) 0%, var(--gradient-2) 30%, var(--gradient-3) 63%, var(--gradient-4) 100%);
+            z-index: -1;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        header h1 {
+            color: var(--header-text);
+            font-size: 3rem;
+            font-weight: 600;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .left-section span {
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--span-color);
+        }
+
+        .log_btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .log_btn:hover {
+            background-color: #f1f1f1;
+            color: #000;
+        }
+
+        .adm_dash_btn {
+            background-color: #2323a4;
+            text-decoration: none;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .adm_dash_btn:hover {
+            background-color: #f1f1f1;
+            color: #000;
+        }
+
+        main {
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .environment-selector {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .environment-selector label {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .environment-selector select {
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark mode overrides for hardcoded hover colors */
+        [data-theme="dark"] .environment-selector select:hover {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] .container:hover {
+            border: 2px solid #555;
+        }
+
+        [data-theme="dark"] .container h2 {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+
+        .environment-selector select:hover {
+            background-color: #72A2B3;
+            color: #fff;
+        }
+
+        .container-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            /* max-width: 1500px; */
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            border-radius: 16px;
+            padding: 0.5rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 30px var(--container-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+            border: 2px solid #72A2B3;
+        }
+
+        .container h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+            padding-bottom: 0.5rem;
+        }
+
+        .container p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover-bg);
+            color: var(--btn-hover-text);
+            transform: scale(1.05);
+        }
+
+        .error-message {
+            color: red;
+            font-size: 1rem;
+            margin-left: 1rem;
+            animation: flash 1s infinite;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 9%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 0;
+            }
+
+            75% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            main {
+                padding: 1rem 1rem;
+            }
+
+            .container-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        p {
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header>
+        <div class="right-section"><button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark Mode</span>
+        </button></div>
+        <h1>RA Testing Dashboard</h1>
+    
+        <div class="left-section">
+            
+            <span>Welcome, {{ user.email }} ({{ user.role }})</span>
+    
+            {% if user.role == "admin" %}
+            <a href="{% url 'admin_dashboard' %}" class="adm_dash_btn">Admin Dashboard</a>
+            {% endif %}
+    
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="log_btn">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+
+
+        <div class="environment-selector">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <label for="environment">Select Environment:</label>
+                <select name="environment" id="environment" onchange="this.form.submit()" required>
+                    <option value="" disabled {% if not request.POST.environment %}selected{% endif %}>
+                        Select Environment
+                    </option>
+                    {% for env in environments %}
+                    <option value="{{ env.name }}" {% if request.POST.environment == env.name or request.session.road_api == env.base_url %} selected {% endif %}>
+                        {{ env.base_url }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            <div class="error-message">
+                {% if not request.session.road_api %}
+                Select the Environment First
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="container-group">
+
+            {% comment %} <div class="container">
+                <h2>Furniture Model Testing</h2>
+                <p>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            </div> {% endcomment %}
+            {% if request.POST.environment != 'pmb' %}
+            <div class="container">
+                <h2>Furniture Model Testing</h2>
+                <p>Furniture Anomalies And Assets Delete From Json File.</p>
+                <a href="{% url 'upload_furniture_json' %}" class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Get Furniture JSON From Dashboard</h2>
+                <p>Retrieve JSON Data From The Dashboard.</p>
+                <a href="{% url 'get_furniture_json' %}" class="btn">Detail</a>
+            </div>
+            {% endif %}
+
+            {% if request.POST.environment != 'ndd' %}
+            <div class="container">
+                <h2>Pavement Model Testing</h2>
+                <p>Pavement Anomalies And Assets Delete From Json File.</p>
+                <a href="/fetch-pavement/" class="btn">Detail</a>
+            </div>
+
+
+            <div class="container">
+                <h2>Get Pavement JSON From Dashboard</h2>
+                <p>Retrieve JSON Data From The Dashboard.</p>
+                <a href="{% url 'get_pavement_json' %}" class="btn">Detail</a>
+            </div>
+            {% endif %}
+
+
+
+            <!-- {% comment %} <div class="container">
+                <h2>Manual Data Plotting</h2>
+                <p>Add New Data In The Json File</p>
+                <a href="{% url 'upload_images_pavement' %}" class="btn">Detail</a>
+            </div> {% endcomment %} -->
+
+
+            {% if user.role != "tester" %}
+            <div class="container">
+                <h2>Upload Data</h2>
+                <p>Upload New Data To The System.</p>
+                <a href="{% url 'upload_data' %}" class="btn">Detail</a>
+            </div>
+            {% endif %}
+
+            {% comment %} <div class="container">
+                <h2>Get Furniture JSON From Dashboard</h2>
+                <p>Retrieve JSON Data From The Dashboard.</p>
+                <a href="{% url 'get_furniture_form' %}" class="btn">Detail</a>
+            </div> {% endcomment %}
+
+            <div class="container">
+                <h2>Download Filtered Road Sign Data</h2>
+                <p>Retrieve Road Sign Data using figure number</p>
+                <a href='filter-road-sign/' class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Get Road IDs</h2>
+                <p>Get the roads ids for selected Head Office, Regional Office and Sub-Division</p>
+                <a href="/view-roads/" class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Get Road IDs by date</h2>
+                <p>Get the roads ids for selected Head Office, Regional Office and Sub-Division</p>
+                <a href="/view-roads-date/" class="btn">Detail</a>
+            </div>
+
+            {% if user.role != "tester" %}
+            <div class="container">
+                <h2>Patch Road data</h2>
+                <p>Edit the existing data in road</p>
+                <a href="patch_road/" class="btn">Detail</a>
+            </div>
+            {% endif %}
+            <div class="container">
+                <h2>Furniture Service Lane Testing</h2>
+                <p>Upload Json Files</p>
+                <a href="{% url 'AnomalyUploadView' %}" class="btn">Detail</a>
+            </div>
+
+            {% if user.role != "tester" %}
+            <div class="container">
+                <h2>Excel Report Generation</h2>
+                <p>Merge all the excels to generate a final report</p>
+                <a href="/excelmerge/" class="btn">Detail</a>
+            </div>
+            {% endif %}
+
+            <div class="container">
+                <h2>Generate And Patch Excel</h2>
+                <p>Generate and patch the excel report to the dashboard</p>
+                <a href="/generate-and-patch-excel/" class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Generate Final Excel</h2>
+                <p>Generate and patch the excel report to the dashboard</p>
+                <a href="/generate-final-excel/" class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Gpx App</h2>
+                <p>This is to view the gpx</p>
+                <a href="/gpx-app/" class="btn">Detail</a>
+            </div>
+
+            <div class="container">
+                <h2>Gpx Processor</h2>
+                <p>This helps to process the Gpx</p>
+                <a href="/gpx-processor/" class="btn">Detail</a>
+            </div>
+
+            {% if user.role != "tester" %}
+            <div class="container">
+                <h2>Update chainage</h2>
+                <p>Patch the chainage</p>
+                <a href="/chainage-repo/" class="btn">Detail</a>
+            </div>
+            {% endif %}
+
+            <div class="container">
+                <h2>Show Markers</h2>
+                <p>This is to show markers</p>
+                <a href="gpx-view/show-markers/" class="btn">Detail</a>
+            </div>
+            <div class="container">
+                <h2>Edit Gpx</h2>
+                <p>Edit the gpx here</p>
+                <a href="gpx/upload/" class="btn">Detail</a>
+            </div>
+            <div class="container">
+                <h2>Pavement Model Testing Pothole type</h2>
+                <p>Pavement Anomalies And Assets Delete From Json File.</p>
+                <a href="/pothole-pavement/" class="btn">Detail</a>
+            </div>
+            <div class="container">
+                <h2>Manual Data Plotting</h2>
+                <p>Add New Data In The Json File</p>
+                <a href="{% url 'upload_images' %}" class="btn">Detail</a>
+            </div>
+        </div>
+    </main>
+</body>
+   <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text'); // NEW: Get the text element
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        themeText.textContent = savedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'; // NEW: Set initial text
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        themeText.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode'; // NEW: Update text on click
+    });
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('environment');
+        const buttons = document.querySelectorAll('.btn');
+
+        function toggleButtons() {
+            const value = select.value;
+            const enable = value !== '';
+            buttons.forEach(btn => {
+                if (btn.classList.contains('log_btn') || btn.classList.contains('adm_dash_btn')) return;
+                btn.disabled = !enable;
+                btn.style.opacity = enable ? '1' : '0.5';
+                btn.style.pointerEvents = enable ? 'auto' : 'none';
+            });
+        }
+
+        if (select) {
+            toggleButtons();  // initial load
+            select.addEventListener('change', toggleButtons);
+        }
+    });
+</script>
+
+</html>

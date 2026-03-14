@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RA Testing Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F1F1F1;
+            --gradient-1: rgb(255, 255, 255);
+            --gradient-2: rgb(226, 226, 226);
+            --gradient-3: rgb(212, 212, 212);
+            --gradient-4: rgb(198, 198, 198);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --text-color: #000;
+            --header-text: #fff;
+            --span-color: rgba(243, 210, 109, 1);
+            --container-bg: rgba(200, 200, 200, 0.5);
+            --container-shadow: rgba(160, 160, 160, 0.5);
+            --btn-bg: #437383;
+            --btn-text: #fff;
+            --btn-hover-bg: #72A2B3;
+            --btn-hover-text: #000;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --gradient-1: #1a1a1a;
+            --gradient-2: #242424;
+            --gradient-3: #2d2d2d;
+            --gradient-4: #333333;
+            --header-bg: rgba(30, 50, 60, 0.9);
+            --text-color: #e0e0e0;
+            --header-text: #e0e0e0;
+            --span-color: #F3D26D;
+            --container-bg: rgba(45, 45, 45, 0.8);
+            --container-shadow: rgba(0, 0, 0, 0.5);
+            --btn-bg: #355a68;
+            --btn-text: #e0e0e0;
+            --btn-hover-bg: #5a8ca0;
+            --btn-hover-text: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            position: relative;
+            z-index: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--gradient-1) 0%, var(--gradient-2) 30%, var(--gradient-3) 63%, var(--gradient-4) 100%);
+            z-index: -1;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            color: var(--header-text);
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .left-section span {
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--span-color);
+        }
+
+        .log_btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .log_btn:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.05);
+            color: #000;
+        }
+
+        main {
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 30px var(--container-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+            border: 2px solid #72A2B3;
+        }
+
+        .container h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+            padding-bottom: 0.5rem;
+        }
+
+        .container p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover-bg);
+            color: var(--btn-hover-text);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .container-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>RA Testing Admin Dashboard</h1>
+        <div class="left-section">
+            <button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
+                <span id="theme-icon">🌙</span>
+            </button>
+            <span>Welcome, {{ user.email }}</span>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="log_btn">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        <div class="container-group">
+            <div class="container">
+                <h2>Dashboard</h2>
+                <p>RA Testing Dashboard</p>
+                <a href="{% url 'base_page' %}" class="btn">Detail</a>
+            </div>
+            <div class="container">
+                <h2>User Creation</h2>
+                <p>Register new user of the manual</p>
+                <a href="{% url 'register_user' %}" class="btn">Detail</a>
+            </div>
+            <div class="container">
+                <h2>Manage Users</h2>
+                <p>List of users having access to the dashboard</p>
+                <a href="{% url 'user_list' %}" class="btn">Detail</a>
+            </div>
+        </div>
+    </main>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+    </script>
+</body>
+
+</html>

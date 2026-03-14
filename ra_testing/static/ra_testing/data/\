@@ -1,0 +1,84 @@
+
+{
+    "pavement": {
+
+        "anomalies": {
+        "Road": [0, 0, 0],
+        "Alligator Crack": [0, 160, 160],
+        "Patch": [255, 255, 0],
+        "Pothole": [255, 0, 0],
+        "Raveling": [188, 50, 73],
+        "Crack/L-H": [0, 255, 255],
+        "Garbage": [0, 100, 100],
+        "Manhole": [235, 168, 52],
+        "Paverblock": [125, 224, 31],
+        "Mud": [100, 100, 100],
+        "Waterlog": [100, 100, 100],
+        "Drainage": [162, 28, 189],
+        "Bleeding": [100, 150, 100],
+        "Webcrack": [0, 160, 160],
+        "WATER LOGGING": [20, 150, 200],
+        "GARBAGE ON ROAD/ DIRTY ROADS/ ELECTRICAL/ CONSTRUCTION WASTE": [100, 75, 50]
+        }, 
+
+        "assets": {}
+
+    },
+
+    "furniture": {
+
+        "assets": {
+
+            "INFORMATORY_SIGNS": [255, 125, 0],
+            "PROHIBITORY_MANDATORY_SIGNS": [80, 127, 255],
+            "CAUTIONARY_WARNING_SIGNS": [124, 225, 255],
+            "FADED_INFORMATORY_SIGNS": [0, 0, 255],
+            "HAZARD": [0, 255, 0],
+            "CHEVRON": [252, 124, 240],
+            "NON_STANDARD_INFOMATORY_SIGNS": [255, 95, 71],
+            "ADVERTISEMENT_ENCHROACHMENT_SIGNS": [96, 147, 171],
+            "REGULATORY SIGNS": [250, 50, 50]
+        } ,
+
+        "anomalies" : {
+
+            "DETECTION OF ILLEGAL STALLS/ ENCROACHMENTS": [180, 130, 70],
+            "STRAY ANIMAL (CATTLE/DOG)": [200, 200, 50],
+            "ENCROACHMENTS": [130, 130, 130],
+            "DAMAGED, TILTED, OR BROKEN GANTRY": [50, 100, 50],
+            "DAMAGED BUS SHELTERS": [90, 0, 180],
+            "MISSING MEDIAN PLANTATION": [0, 170, 120],
+            "TREE": [0, 255, 127],
+            "UNAUTHORIZED ADVERTISEMENT SIGN BOARDS": [150, 50, 255],
+            "BROKEN STREET LIGHTS": [100, 100, 220],
+            "PERSONS SLEEPING ON FOOTPATHS": [120, 90, 80],
+            "OVERFLOWING OR DAMAGED DUSTBINS": [50, 150, 50],
+            "DAMAGED STREET FURNITURE": [200, 80, 200],
+            "DAMAGED TRAFFIC SIGNAGE": [80, 100, 255],
+            "GAPS IN VEGETATION": [80, 170, 120],
+            "OPEN DRAINS": [150, 150, 100],
+            "OPEN MANHOLE": [90, 90, 90],
+            "DAMAGED/BROKEN PAVER BLOCKS AND PEDESTRIAN PATHWAYS": [60, 150, 90],
+            "DAMAGED KERBSTONES": [170, 170, 0],
+            "FADED ROAD MARKINGS": [50, 50, 200],
+            "BROKEN ROAD EDGES": [200, 80, 100],
+            "CULVERT": [150, 80, 50],
+            "CRASH BARRIER": [80, 80, 80],
+            "FADED BOUNDARY STONES": [50, 100, 150],
+            "WORN-OUT ZEBRA CROSSINGS": [0, 150, 250],
+            "VEGETATION BLOCKING DRAINAGE": [50, 200, 150],
+            "FADED MARKED SPEED BREAKERS": [100, 0, 255],
+            "DETECTION OF MUD/VEGETATION ACCUMULATION IN DRAINS": [80, 160, 180],
+            "OPEN PUCCA DRAINS": [140, 140, 140],
+            "DAMAGED PUCCA DRAINS": [90, 140, 100],
+            "FADED SPEED BREAKERS": [255, 200, 0],
+            "CONSTRUCTION IN PROGRESS": [100, 100, 250],
+            "DETECTION OF ROAD SURFACE DAMAGE": [50, 200, 50],
+            "DAMAGED INFRASTRUCTURE": [220, 30, 70],
+            "DAMAGED MANHOLES": [200, 100, 0]
+        
+
+        }
+        
+    }
+}

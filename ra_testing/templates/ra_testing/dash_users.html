@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <title>Registered Users</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F1F1F1;
+            --gradient-1: rgb(255, 255, 255);
+            --gradient-2: rgb(226, 226, 226);
+            --gradient-3: rgb(212, 212, 212);
+            --gradient-4: rgb(198, 198, 198);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --text-color: #333;
+            --header-text: #fff;
+            --h2-color: #437383;
+            --table-bg: white;
+            --table-shadow: rgba(0, 0, 0, 0.1);
+            --table-border: #eee;
+            --table-hover: #f1f1f1;
+            --th-bg: #437383;
+            --th-text: white;
+            --pagination-bg: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --gradient-1: #1a1a1a;
+            --gradient-2: #242424;
+            --gradient-3: #2d2d2d;
+            --gradient-4: #333333;
+            --header-bg: rgba(30, 50, 60, 0.9);
+            --text-color: #e0e0e0;
+            --header-text: #e0e0e0;
+            --h2-color: #72A2B3;
+            --table-bg: #1e1e1e;
+            --table-shadow: rgba(0, 0, 0, 0.5);
+            --table-border: #333;
+            --table-hover: #2a2a2a;
+            --th-bg: #2d4f5a;
+            --th-text: #e0e0e0;
+            --pagination-bg: #1e1e1e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            z-index: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--gradient-1) 0%, var(--gradient-2) 30%, var(--gradient-3) 63%, var(--gradient-4) 100%);
+            z-index: -1;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: var(--header-text);
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .adm_dash_btn {
+            background-color: #2323a4;
+            text-decoration: none;
+            color: #f1f1f1;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .adm_dash_btn:hover {
+            background-color: #f1f1f1;
+            color: #000;
+            text-decoration: none;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--h2-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            max-width: 1000px;
+            margin: 2rem auto;
+            border-collapse: collapse;
+            background: var(--table-bg);
+            box-shadow: 0 4px 10px var(--table-shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--table-border);
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: var(--th-bg);
+            color: var(--th-text);
+        }
+
+        tr {
+            color: var(--text-color);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: var(--table-hover);
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        form {
+            display: inline;
+        }
+
+        a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] a {
+            color: #64b5f6;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:visited {
+            color: #1976d2;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .pagination-container {
+            display: inline-block;
+            background: var(--pagination-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px var(--table-shadow);
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .left-section {
+                margin-bottom: 1rem;
+            }
+
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>RA Testing Admin Dashboard</h1>
+        <div class="left-section">
+            <button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
+                <span id="theme-icon">🌙</span>
+            </button>
+            <a href="{% url 'admin_dashboard' %}" class="adm_dash_btn">Admin Dashboard</a>
+        </div>
+    </header>
+
+    <br>
+    {% if success %}
+    <div
+        style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 5px; margin: 1rem auto; width: 90%; max-width: 1000px;">
+        {{ success }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div
+        style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; margin: 1rem auto; width: 90%; max-width: 1000px;">
+        {{ error }}
+    </div>
+    {% endif %}
+    <h2>Registered Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_user' user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    <div style="text-align: center; margin: 2rem;">
+        <div class="pagination-container">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" style="margin-right: 0.5rem;">« First</a>
+            <a href="?page={{ page_obj.previous_page_number }}" style="margin-right: 0.5rem;">‹ Prev</a>
+            {% endif %}
+
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" style="margin-left: 0.5rem;">Next ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" style="margin-left: 0.5rem;">Last »</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+    </script>
+</body>
+
+</html>

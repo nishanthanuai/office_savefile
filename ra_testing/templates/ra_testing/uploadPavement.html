@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>All
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Pavement JSON File</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        header {
+            background-color: #437383; /* Updated to match previous theme */
+            color: #fff;
+            {% comment %} padding: 1.5rem 0; {% endcomment %}
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+            padding: 2rem;
+            box-sizing: border-box;
+            margin-top: 70px; /* Space for the fixed header */
+        }
+        
+        .upload-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .upload-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .upload-container h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            color: #437383; /* Updated to match previous theme */
+        }
+        
+        .upload-container p {
+            color: #666;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .upload-container input[type="file"] {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            border: 1px solid #ddd; /* Updated to match previous theme */
+            border-radius: 6px;
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .upload-container button {
+            display: inline-block;
+            background: linear-gradient(to right, #437383, #437383); /* Updated gradient */
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
+        }
+        
+        .upload-container button:hover {
+            background: linear-gradient(to right, #437383, #437383); /* Updated gradient */
+            transform: translateY(-2px);
+        }
+        
+        .upload-container button:active {
+            transform: translateY(1px);
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Upload Pavement JSON File</h1>
+    </header>
+    <main>
+        <div class="upload-container">
+            <h2>Choose Your JSON File</h2>
+            <p>Select a JSON file containing pavement data to upload.</p>
+            <form action="{% url 'upload_pavement_json' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="json_file" accept=".json" required>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

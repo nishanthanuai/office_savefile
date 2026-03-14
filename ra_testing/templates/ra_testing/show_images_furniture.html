@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Furniture Model Testing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --font-base: clamp(0.9rem, 1.4vw, 1.05rem);
+            --font-header: clamp(1.4rem, 2.5vw, 2rem);
+            --btn-radius: 10px;
+            --primary: linear-gradient(180deg, #9ab2ba 0%, #6b909c 100%);
+            --accent: #ffbb52;
+            --danger: #ff5252;
+            /* Theme Variables */
+            --bg-color: linear-gradient(180deg, #fff 0%, #e2e2e2 30%, #d4d4d4 63%, #c6c6c6 100%);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --container-bg: rgba(255, 255, 255, 0.82);
+            --info-bg: rgba(0, 0, 0, 0.05);
+            --text-primary: #333;
+            --text-label: #437383;
+            --input-bg: #fff;
+
+            --font-base: clamp(0.9rem, 1.4vw, 1.05rem);
+            --font-header: clamp(1.4rem, 2.5vw, 2rem);
+            --btn-padding: 0.6rem 1rem;
+            --btn-radius: 10px;
+            --btn-gap: 10px;
+
+            /* Layout */
+            --bg-body: #F8FAFC;
+            --bg-body-gradient: linear-gradient(180deg, #fff 0%, #e2e2e2 30%, #d4d4d4 63%, #c6c6c6 100%);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --header-text: #fff;
+            --container-bg: rgba(255, 255, 255, 0.8);
+            --container-shadow: rgba(0, 0, 0, 0.4);
+            --info-bg: rgba(0, 0, 0, 0.05);
+
+            /* Typography */
+            --text-primary: #0F172A;
+            --text-muted: #475569;
+            --label-color: #437383;
+            --value-color: #555;
+
+            /* Buttons */
+            --primary-btn: linear-gradient(180deg, #9ab2ba 0%, #6b909c 100%);
+            --accent: #ffbb52;
+            --danger: #ff5252;
+            --btn-menu-bg: white;
+            --btn-menu-text: #333;
+            --btn-menu-hover-bg: black;
+            --btn-menu-hover-text: white;
+
+            /* Inputs */
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --input-focus-border: #007BFF;
+
+            /* Checkboxes */
+            /* --checkbox-bg: #f9fafb;
+            --checkbox-border: #d1d5db;
+            --checkbox-strong: #111827;
+            --checkbox-accent: #2563eb; */
+
+            /* Select */
+            --select-bg: #fff;
+            --select-border: #ccc;
+
+            /* Table */
+            --table-border: transparent;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --header-bg: rgba(30, 30, 30, 0.95);
+            --container-bg: #1c1c1c;
+            --info-bg: rgba(255, 255, 255, 0.03);
+            --text-primary: #e0e0e0;
+            --text-label: #a0a0a0;
+            --input-bg: #2a2a2a;
+            --primary: #2a2a2a;
+            /* Neutral grayscale buttons */
+
+            /* Layout */
+            --bg-body: #121212;
+            --bg-body-gradient: linear-gradient(180deg, #1a1a1a 0%, #141414 30%, #111111 63%, #0d0d0d 100%);
+            --header-bg: rgba(30, 30, 30, 0.95);
+            --header-text: #e0e0e0;
+            --container-bg: rgba(28, 28, 28, 0.9);
+            --container-shadow: rgba(0, 0, 0, 0.6);
+            --info-bg: rgba(255, 255, 255, 0.04);
+
+            /* Typography */
+            --text-primary: #e6e6e6;
+            --text-muted: #9a9a9a;
+            --label-color: #b0b0b0;
+            --value-color: #c0c0c0;
+
+            /* Buttons */
+            --primary-btn: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            --accent: #d4993a;
+            --danger: #c0392b;
+            --btn-menu-bg: #1c1c1c;
+            --btn-menu-text: #ccc;
+            --btn-menu-hover-bg: #333;
+            --btn-menu-hover-text: #fff;
+
+            /* Inputs */
+            --input-bg: #1c1c1c;
+            --input-border: #333;
+            --input-focus-border: #888;
+
+            /* Checkboxes */
+            --checkbox-bg: #1c1c1c;
+            --checkbox-border: #333;
+            --checkbox-strong: #e0e0e0;
+            --checkbox-accent: #888;
+
+            /* Select */
+            --select-bg: #1c1c1c;
+            --select-border: #333;
+
+            /* Table */
+            --table-border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            font-size: var(--font-base);
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: var(--font-header);
+            font-weight: 600;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            right: 2rem;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        #image-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            width: 90vw;
+            height: 85vh;
+            margin: 20px auto;
+            background: var(--container-bg);
+            border-radius: var(--btn-radius);
+            padding: 20px;
+            overflow: auto;
+            transition: background 0.3s ease;
+        }
+
+        #image-element {
+            width: 68%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: var(--btn-radius);
+        }
+
+        #image-info {
+            width: 30%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--info-bg);
+            border-radius: var(--btn-radius);
+            padding: 20px;
+            min-width: 300px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: var(--text-label);
+        }
+
+        .value {
+            color: var(--text-primary);
+            text-align: right;
+            flex: 1;
+        }
+
+        .selector select {
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        #jump-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        #jump-button {
+            width: 120px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: var(--btn-radius);
+            border: none;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            /* color: #fff; */
+        }
+
+        #anomaly-type-checkboxes {
+            background-color: var(--info-bg);
+            /* border: 1px solid #444; */
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-wrapper {
+            background: var(--input-bg);
+            /* border: 1px solid #444; */
+            color: var(--text-primary);
+        }
+
+        #theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Default (Light Mode) */
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        #theme-toggle:hover {
+            background-color: var(--hover-bg);
+            color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            transform: translateX(-2px);
+            /* Subtle nudge to indicate the "back" direction */
+        }
+
+        /* Dark Mode Specific Adjustments */
+        [data-theme="dark"] #theme-toggle {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            /* Brighter white for better contrast on hover */
+            border-color: var(--text-muted);
+        }
+
+        .btn {
+            position: absolute;
+            left: 1%;
+            background-color: var(--btn-menu-bg);
+            color: var(--btn-menu-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+            justify-self: flex-start;
+            border: 1px solid var(--input-border);
+        }
+
+        .btn:hover {
+            background-color: var(--btn-menu-hover-bg);
+            color: var(--btn-menu-hover-text);
+            transform: scale(1.05);
+        }
+
+        #button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        #prev-button,
+        #next-button {
+            background-color: var(--accent);
+            flex: 1;
+        }
+
+        #delete-undo-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        #delete-button {
+            background-color: var(--danger);
+            flex: 7;
+        }
+
+        #undo-button {
+            background: var(--primary-btn);
+            flex: 3;
+        }
+
+        #download-button,
+        #patch-button {
+            background: var(--primary-btn);
+            width: 100%;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+            white-space: nowrap;
+            /* color: white; */
+        }
+
+        #anomaly-type-select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 6px;
+            background-color: var(--select-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--select-border);
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            #image-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            #image-element {
+                width: 100%;
+                max-height: 300px;
+            }
+
+            #image-info {
+                width: 100%;
+                height: auto;
+            }
+
+            .jump-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .jump input,
+            .jump button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <header>
+        <a href="/" class="btn">← Menu</a>
+        <h1>Furniture Model Testing</h1>
+        <button id="theme-toggle">🌓 Dark Mode</button>
+
+    </header>
+
+
+    <div id="image-container">
+        <img id="image-element" src="" alt="Image" />
+        <div id="image-info">
+
+            <!-- 1. Data Type Selector (From original code) -->
+            <div class="selector" style="margin-bottom: 10px;">
+                <label for="data-type">Select Data Type:</label>
+                <select id="data-type" class="selector">
+                    <option value="assets">Assets</option>
+                    <option value="anomalies">Anomalies</option>
+                </select>
+            </div>
+
+            <!-- 2. Filter Checkboxes (From target code) -->
+            <div id="anomaly-type-checkboxes">
+                <strong>Filter by Type:</strong><br>
+                <!-- Checkboxes will be inserted here dynamically -->
+            </div>
+
+            <!-- 3. Details Table (Layout from target code, IDs from original) -->
+            <div id="image-details">
+                <table>
+                    <tr>
+                        <td><span class="label" id="label-number">Identifier:</span></td>
+                        <td><span class="value" id="identifier"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="label" id="label-type">Type:</span></td>
+                        <td><span class="value" id="type"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="label">Latitude:</span></td>
+                        <td><span class="value" id="latitude"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="label">Longitude:</span></td>
+                        <td><span class="value" id="longitude"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="label">Distance:</span></td>
+                        <td><span class="value" id="distance"></span></td>
+                    </tr>
+                </table>
+
+                <!-- 4. Jump Section (Style from target code) -->
+                <div class="jump">
+                    <label for="jump-input">Jump to index:</label>
+                    <div style="display: flex; align-items: center; flex-direction: row; margin-top: 10px;">
+                        <input type="number" id="jump-input" placeholder="Enter the index" />
+                        <button id="jump-button" class="action-button">Go</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Button Container (Structure from target code) -->
+            <div id="button-container">
+                <div class="button-group">
+                    <button id="prev-button" class="action-button">Previous</button>
+                    <button id="next-button" class="action-button">Next</button>
+                </div>
+
+                <div id="delete-undo-group">
+                    <button id="delete-button">Delete</button>
+                    <button id="undo-button">Undo</button>
+                </div>
+
+                <button id="download-button" class="action-button">Download JSON</button>
+                <button id="patch-button" class="action-button">Patch Latest JSON</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ---------------------------------------------------------
+            // 1. INITIALIZATION
+            // ---------------------------------------------------------
+            const originalFilename = '{{ original_filename|escapejs }}';
+            const road_id = '{{road_id}}'
+            // Parse Data safely
+            const rawData = '{{ data|escapejs }}';
+            const data = rawData ? JSON.parse(rawData) : { assets: [], anomalies: [] };
+
+            // Main Data Arrays
+            const imageAssets = data.assets || [];
+            const imageAnomalies = data.anomalies || [];
+
+            // State Variables
+            let currentDataType = 'assets'; // 'assets' or 'anomalies'
+            let currentIndex = 0;
+            let filteredItems = []; // Items currently visible based on filters
+
+            // Stack to store deleted items for Undo functionality
+            const deletedStack = [];
+
+            // ---------------------------------------------------------
+            // 2. HELPER FUNCTIONS
+            // ---------------------------------------------------------
+
+            // Get CSRF Token for Patch Request
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Get the type string (handles different keys in JSON)
+            function getItemType(item) {
+                if (currentDataType === 'assets') {
+                    return item['Asset type'] || 'Unknown';
+                } else {
+                    return item['Anomaly type'] || 'Unknown';
+                }
+            }
+
+            // ---------------------------------------------------------
+            // 3. UI GENERATION (CHECKBOXES)
+            // ---------------------------------------------------------
+            function generateFilterCheckboxes(dataSet) {
+                const mainContainer = document.getElementById('anomaly-type-checkboxes');
+                mainContainer.innerHTML = '';
+
+                // Header Row
+                const headerRow = document.createElement('div');
+                headerRow.style.display = 'flex';
+                headerRow.style.justifyContent = 'space-between';
+                headerRow.style.alignItems = 'center';
+                headerRow.style.width = '100%';
+
+                const title = document.createElement('strong');
+                title.textContent = 'Filter by Type:';
+
+                // Collapse/Expand Button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.textContent = 'Hide';
+                toggleBtn.style.cursor = 'pointer';
+                toggleBtn.style.fontSize = '12px';
+                toggleBtn.style.padding = '2px 8px';
+                toggleBtn.className = 'action-button';
+                toggleBtn.style.marginLeft = '10px';
+                toggleBtn.style.height = 'auto';
+
+                headerRow.appendChild(title);
+                headerRow.appendChild(toggleBtn);
+                mainContainer.appendChild(headerRow);
+
+                // Checkbox Container
+                const listContainer = document.createElement('div');
+                listContainer.id = 'checkbox-list';
+                mainContainer.appendChild(listContainer);
+
+                // Toggle Logic
+                toggleBtn.addEventListener('click', () => {
+                    if (listContainer.style.display === 'none') {
+                        listContainer.style.display = 'flex';
+                        toggleBtn.textContent = 'Hide';
+                    } else {
+                        listContainer.style.display = 'none';
+                        toggleBtn.textContent = 'Show';
+                    }
+                });
+
+                if (!dataSet || dataSet.length === 0) {
+                    listContainer.innerHTML = '<span style="color:gray;">No data available</span>';
+                    return;
+                }
+
+                // Generate Boxes
+                const uniqueTypes = [...new Set(dataSet.map(item => getItemType(item)))];
+
+                uniqueTypes.forEach(type => {
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('filter-wrapper');
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `filter-${type.replace(/\s+/g, '-')}`;
+                    checkbox.value = type;
+                    checkbox.checked = true;
+                    checkbox.classList.add('type-filter');
+
+                    checkbox.addEventListener('change', () => {
+                        applyFilters();
+                    });
+
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.textContent = type;
+
+                    wrapper.appendChild(checkbox);
+                    wrapper.appendChild(label);
+                    listContainer.appendChild(wrapper);
+                });
+            }
+
+            // ---------------------------------------------------------
+            // 4. CORE LOGIC (FILTER & UPDATE)
+            // ---------------------------------------------------------
+            function applyFilters() {
+                const sourceData = currentDataType === 'assets' ? imageAssets : imageAnomalies;
+                const checkboxes = document.querySelectorAll('.type-filter:checked');
+                const checkedValues = Array.from(checkboxes).map(cb => cb.value);
+
+                filteredItems = sourceData.filter(item => {
+                    const type = getItemType(item);
+                    return checkedValues.includes(type);
+                });
+
+                // Adjust index if out of bounds after filtering/deleting
+                if (currentIndex >= filteredItems.length) {
+                    currentIndex = Math.max(0, filteredItems.length - 1);
+                }
+
+                updateContent();
+            }
+
+            function updateContent() {
+                if (!filteredItems || filteredItems.length === 0) {
+                    document.getElementById('image-element').src = '';
+                    document.getElementById('image-element').alt = 'No items match filter';
+                    document.getElementById('identifier').textContent = '-';
+                    document.getElementById('type').textContent = '-';
+                    document.getElementById('latitude').textContent = '-';
+                    document.getElementById('longitude').textContent = '-';
+                    document.getElementById('distance').textContent = '-';
+                    return;
+                }
+
+                const item = filteredItems[currentIndex];
+
+                document.getElementById('image-element').src = item.image || '';
+                document.getElementById('image-element').alt = 'Image';
+
+                if (currentDataType === 'assets') {
+                    document.getElementById('identifier').textContent = item['Assets number'] || '';
+                    document.getElementById('type').textContent = item['Asset type'] || '';
+                } else {
+                    document.getElementById('identifier').textContent = item['Anomaly number'] || '';
+                    document.getElementById('type').textContent = item['Anomaly type'] || '';
+                }
+
+                document.getElementById('latitude').textContent = item['Latitude'] || '';
+                document.getElementById('longitude').textContent = item['Longitude'] || '';
+                document.getElementById('distance').textContent = item['Distance'] || '';
+            }
+
+            // ---------------------------------------------------------
+            // 5. EVENT LISTENERS
+            // ---------------------------------------------------------
+
+            // --- Navigation & Filtering ---
+            document.getElementById('data-type').addEventListener('change', () => {
+                currentDataType = document.getElementById('data-type').value;
+                currentIndex = 0;
+                const dataToLoad = currentDataType === 'assets' ? imageAssets : imageAnomalies;
+                generateFilterCheckboxes(dataToLoad);
+                applyFilters();
+            });
+
+            document.getElementById('next-button').addEventListener('click', () => {
+                if (filteredItems.length > 0) {
+                    currentIndex = (currentIndex + 1) % filteredItems.length;
+                    updateContent();
+                }
+            });
+
+            document.getElementById('prev-button').addEventListener('click', () => {
+                if (filteredItems.length > 0) {
+                    currentIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
+                    updateContent();
+                }
+            });
+
+            document.getElementById('jump-button').addEventListener('click', () => {
+                const val = parseInt(document.getElementById('jump-input').value);
+                if (!isNaN(val) && val >= 0 && val < filteredItems.length) {
+                    currentIndex = val;
+                    updateContent();
+                } else {
+                    alert(`Please enter an index between 0 and ${filteredItems.length - 1}`);
+                }
+            });
+
+            // --- BUTTONS LOGIC: Delete, Undo, Download, Patch ---
+            // 1. DELETE BUTTON
+            document.getElementById('delete-button').addEventListener('click', () => {
+                if (filteredItems.length === 0) return;
+
+                const itemToDelete = filteredItems[currentIndex];
+                const sourceArray = currentDataType === 'assets' ? imageAssets : imageAnomalies;
+
+                // Find index in the REAL source array
+                const indexInSource = sourceArray.indexOf(itemToDelete);
+
+                if (indexInSource > -1) {
+                    // Remove from source
+                    sourceArray.splice(indexInSource, 1);
+
+                    // Add to Undo Stack WITH THE ORIGINAL INDEX
+                    deletedStack.push({
+                        item: itemToDelete,
+                        sourceType: currentDataType,
+                        originalIndex: indexInSource // <--- Save the position
+                    });
+
+                    // Update UI
+                    // We don't change currentIndex here automatically, so it will naturally 
+                    // show the "next" item after the one that was just deleted.
+                    applyFilters();
+                }
+            });
+
+            // 2. UNDO BUTTON
+            document.getElementById('undo-button').addEventListener('click', () => {
+                if (deletedStack.length === 0) {
+                    alert("Nothing to undo!");
+                    return;
+                }
+
+                const lastDeleted = deletedStack.pop();
+
+                // Determine which array it belongs to
+                const targetArray = lastDeleted.sourceType === 'assets' ? imageAssets : imageAnomalies;
+
+                // Put it back at the EXACT SAME INDEX
+                // splice(index, 0, item) inserts 'item' at 'index' without removing anything
+                targetArray.splice(lastDeleted.originalIndex, 0, lastDeleted.item);
+
+                // Logic to show the item immediately
+                if (currentDataType === lastDeleted.sourceType) {
+                    applyFilters(); // Re-calculate the filtered list
+
+                    // Find where the restored item is now in the visible list
+                    const restoredItemIndex = filteredItems.indexOf(lastDeleted.item);
+
+                    if (restoredItemIndex !== -1) {
+                        currentIndex = restoredItemIndex; // Jump to the restored item
+                        updateContent();
+                    }
+                } else {
+                    alert(`Undo successful. Item restored to the ${lastDeleted.sourceType} list.`);
+                }
+            });
+
+            // 3. DOWNLOAD BUTTON
+            document.getElementById('download-button').addEventListener('click', function () {
+
+                // 1. Try to find the ID
+                let roadId = road_id;
+
+                // 2. If not in data, extract from originalFilename (e.g., "road_furniture_7_updated...")
+                if (!roadId && typeof originalFilename !== 'undefined') {
+                    // Regex looks for "road_furniture_" followed immediately by numbers
+                    const match = originalFilename.match(/road_furniture_(\d+)/);
+                    if (match && match[1]) {
+                        roadId = match[1];
+                    } else {
+                        // Fallback: Just take the first number found in the string
+                        const simpleMatch = originalFilename.match(/(\d+)/);
+                        if (simpleMatch) roadId = simpleMatch[0];
+                    }
+                }
+
+                // 3. Default to "unknown" if absolutely nothing is found
+                if (!roadId) roadId = "unknown";
+
+                console.log("Final Road ID used:", roadId);
+
+                // 4. Create and Download File
+                const updatedData = JSON.stringify(data, null, 2);
+                const blob = new Blob([updatedData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                // Desired format: road_furniture_7.json
+                const updatedFilename = `road_furniture_${roadId}.json`;
+
+                a.href = url;
+                a.download = updatedFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+
+
+
+
+            // 4. PATCH BUTTON (Send to Server)
+            document.getElementById('patch-button').addEventListener('click', () => {
+                if (!confirm("Are you sure you want to update the database with current changes?")) return;
+
+                const finalData = {
+                    assets: imageAssets,
+                    anomalies: imageAnomalies
+                };
+
+                // Replace '/your-update-url/' with your actual Django URL path
+                fetch('/update-json/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Django CSRF protection
+                    },
+                    body: JSON.stringify({
+                        filename: originalFilename,
+                        data: finalData
+                    })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Data patched successfully!');
+                        } else {
+                            alert('Failed to patch data.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred.');
+                    });
+            });
+
+            // ---------------------------------------------------------
+            // 6. INITIAL LOAD
+            // ---------------------------------------------------------
+            generateFilterCheckboxes(imageAssets);
+            filteredItems = imageAssets;
+            updateContent();
+        });
+    </script>
+
+
+    <script>
+        // Theme Switcher Logic
+        const htmlRoot = document.getElementById('htmlRoot');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlRoot.setAttribute('data-theme', savedTheme);
+            themeToggle.innerText = savedTheme === 'dark' ? '☀️ Light Mode' : '🌓 Dark Mode';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlRoot.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme();
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') applyTheme();
+        });
+
+        applyTheme();
+
+        // ... (Keep the rest of your original Furniture Testing script here) ...
+    </script>
+    <script>
+        document.addEventListener('keydown', function (event) {
+            const key = event.key.toLowerCase();
+            if (key === 'a') {
+                document.getElementById('prev-button')?.click();
+            } else if (key === 'd') {
+                document.getElementById('next-button')?.click();
+                // } else if (key === 'e') {
+                //     document.getElementById('delete-button')?.click();
+            } else if (key === 'r') {
+                document.getElementById('undo-button')?.click();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GPX Track</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+    <style>
+        /* General page styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+                position: relative;
+                z-index: 0;
+                min-height: 100vh;
+                overflow-x: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+        header {
+            width: 100%;
+            background: rgba(67, 115, 131, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            
+        }
+
+       main{
+        width: 70%;
+       }
+
+
+        /* Map container styling */
+        #map {
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 2px solid #fff;
+        }
+
+        /* Toggle switch styling */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 0 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.toggle-slider {
+            background-color: #437383;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-container span {
+            font-weight: 500;
+            font-size: 1.1em;
+            transition: color 0.3s;
+        }
+
+
+        /* Button styling */
+        button {
+            background-color: #437383;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 8px;
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+        }
+
+        button:hover {
+            background-color: #72A2B3;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px #437383;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Form styling */
+        form {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        /* Download link styling */
+        .btn-primary {
+            display: inline-block;
+            background-color: #FFFFFF;
+            color: #000000;
+            border: 1px solid #437383;
+            border-radius : 5px;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color:rgb(233, 253, 219);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Selected point styling */
+        .selected-point {
+            background-color: #FF5722;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.4);
+        }
+
+        /* Control container */
+        .control-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 25px 0;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .control-container:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Message styling */
+        .message {
+            background-color:rgb(236, 255, 205);
+            color: rgb(233, 253, 219);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
+            border-left: 4px solid rgb(233, 253, 219);
+            box-shadow: 0 2px 4px rgba(21, 101, 192, 0.1);
+        }
+
+        /* Point popup styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .leaflet-popup-content {
+            margin: 15px;
+        }
+
+        .leaflet-popup-content button {
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .file-list-container {
+            margin-top: 100px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 25px 0;
+            overflow: hidden;
+        }
+        
+        .file-list-container h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            overflow: hidden;
+            min-width: 0; /* Ensures flexbox respects overflow */
+        }
+        
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-name {
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1; /* Allows file name to take available space */
+            min-width: 0; /* Ensures it shrinks properly */
+        }
+        
+        .select-btn {
+            background-color: #437383;
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            flex-shrink: 0; /* Prevents the button from shrinking */
+        }
+        
+        @media (max-width: 400px) {
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        
+            .file-name {
+                white-space: normal;
+                word-break: break-word; /* Wrap long names in smaller screens */
+                margin-bottom: 8px;
+            }
+        
+            .select-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>GPX Track</h1>
+    </header>
+    
+    <main>
+    <div class="file-list-container">
+        <h2>Available GPX Files</h2>
+        <div class="file-grid">
+            {% for file in gpx_files %}
+            <div class="file-item">
+                <span class="file-name">{{ file }}</span>
+                <a href="{% url 'plot_gpx_edit' file_name=file %}" class="select-btn">Select</a>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if not update_successful %}
+        <div id="map"></div>
+    {% endif %}  
+    
+    {% if file_name %}
+        {% if not update_successful %}
+        <div class="toggle-container">
+            <div>
+                <span>Add points to end</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-position">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span>Add points to beginning</span>
+            </div>
+            <button onclick="undoLastPoint()">Undo Last Point</button>
+        </div>
+        {% endif %}  
+
+    <div class="control-container">
+        {% if download_url %}
+        <a href="{{ download_url }}" class="btn-primary">Download Updated GPX</a>
+        {% endif %}
+
+        <form method="POST" action="{% url 'update_gpx' file_name=file_name %}">
+            {% csrf_token %}
+            <input type="hidden" name="new_points" id="new_points">
+            <input type="hidden" name="add_to_beginning" id="add_to_beginning" value="false">
+            {% if not update_successful %}
+                <button type="submit">Save Updated GPX</button>
+            {% endif %}
+
+        </form>
+    </div>
+    {% endif %}
+</main>
+    <script>
+        var map = L.map("map").setView([0, 0], 10);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+        var trackPoints = {{ track_points| safe }};
+        var latlngs = trackPoints.map(p => [p[0], p[1]]);
+
+        if (latlngs.length > 0) {
+            var polyline = L.polyline(latlngs, { color: "blue" }).addTo(map);
+            map.fitBounds(latlngs);
+        }
+
+        var addToBeginning = false; // Default to adding at the end
+        var addedPointsStart = []; // Points added to the beginning
+        var addedPointsEnd = []; // Points added to the end
+        var markersStart = []; // Markers for points added to the beginning
+        var markersEnd = []; // Markers for points added to the end
+        var linesStart = []; // Lines for beginning points
+        var linesEnd = []; // Lines for end points
+        var currentSelectedPoint = null; // Currently selected point for visual indication
+
+        // Get reference points from original track
+        var firstTrackPoint = latlngs.length > 0 ? latlngs[0] : null;
+        var lastTrackPoint = latlngs.length > 0 ? latlngs[latlngs.length - 1] : null;
+
+        // Setup toggle switch listener
+        document.getElementById('toggle-position').addEventListener('change', function (e) {
+            addToBeginning = e.target.checked;
+            document.getElementById('add_to_beginning').value = addToBeginning;
+
+            // Update visual indicators
+            updatePointsVisual();
+        });
+
+        map.on("click", function (e) {
+            if ((!firstTrackPoint && addToBeginning) || (!lastTrackPoint && !addToBeginning)) return;
+
+            var newPoint = [e.latlng.lat, e.latlng.lng];
+            var referencePoint = addToBeginning ?
+                (addedPointsStart.length > 0 ? addedPointsStart[0] : firstTrackPoint) :
+                (addedPointsEnd.length > 0 ? addedPointsEnd[addedPointsEnd.length - 1] : lastTrackPoint);
+
+            fetch("{% url 'get_average_gap' file_name=file_name %}")
+                .then(response => response.json())
+                .then(data => {
+                    var gap = data.average_gap || 10;
+                    var totalDistance = Math.sqrt(
+                        Math.pow(newPoint[0] - referencePoint[0], 2) +
+                        Math.pow(newPoint[1] - referencePoint[1], 2)
+                    );
+                    var numIntermediatePoints = Math.floor(totalDistance / gap);
+
+                    var intermediatePoints = [];
+                    for (var i = 1; i <= numIntermediatePoints; i++) {
+                        var fraction = i / (numIntermediatePoints + 1);
+
+                        // If adding to beginning, generate points from new point toward reference point
+                        // If adding to end, generate points from reference point toward new point
+                        var pointA = addToBeginning ? newPoint : referencePoint;
+                        var pointB = addToBeginning ? referencePoint : newPoint;
+
+                        var lat = pointA[0] + fraction * (pointB[0] - pointA[0]);
+                        var lon = pointA[1] + fraction * (pointB[1] - pointA[1]);
+                        intermediatePoints.push([lat, lon]);
+                    }
+
+                    // Add all points with proper storage and markers
+                    if (addToBeginning) {
+                        // For beginning, add in reverse order (new point first, then intermediates)
+                        addPointToStart(newPoint);
+                        for (var i = 0; i < intermediatePoints.length; i++) {
+                            addPointToStart(intermediatePoints[i]);
+                        }
+                    } else {
+                        // For end, add intermediates first, then new point
+                        for (var i = 0; i < intermediatePoints.length; i++) {
+                            addPointToEnd(intermediatePoints[i]);
+                        }
+                        addPointToEnd(newPoint);
+                    }
+
+                    // Update reference points for next additions
+                    if (addToBeginning) {
+                        firstTrackPoint = addedPointsStart[0];
+                    } else {
+                        lastTrackPoint = addedPointsEnd[addedPointsEnd.length - 1];
+                    }
+
+                    // Update visual representation
+                    redrawLines();
+                });
+        });
+
+        // Function to add a point at the beginning
+        function addPointToStart(point) {
+            var marker = L.marker(point).addTo(map).bindPopup(addToBeginning ? "Start Point" : "End Point");
+
+            // Add click handler for marker
+            marker.on("click", function () {
+                if (currentSelectedPoint) {
+                    // Reset previous selected point marker
+                    currentSelectedPoint.getElement().classList.remove('selected-point');
+                }
+
+                // Set current marker as selected
+                marker.getElement().classList.add('selected-point');
+                currentSelectedPoint = marker;
+
+                // Show popup with remove option
+                marker.bindPopup(`<button onclick="removePoint('start', ${addedPointsStart.length - 1})">Remove Point</button>`).openPopup();
+            });
+
+            addedPointsStart.unshift(point);
+            markersStart.unshift(marker);
+        }
+
+        // Function to add a point at the end
+        function addPointToEnd(point) {
+            var marker = L.marker(point).addTo(map).bindPopup(addToBeginning ? "Start Point" : "End Point");
+
+            // Add click handler for marker
+            marker.on("click", function () {
+                if (currentSelectedPoint) {
+                    // Reset previous selected point marker
+                    currentSelectedPoint.getElement().classList.remove('selected-point');
+                }
+
+                // Set current marker as selected
+                marker.getElement().classList.add('selected-point');
+                currentSelectedPoint = marker;
+
+                // Show popup with remove option
+                marker.bindPopup(`<button onclick="removePoint('end', ${addedPointsEnd.length - 1})">Remove Point</button>`).openPopup();
+            });
+
+            addedPointsEnd.push(point);
+            markersEnd.push(marker);
+        }
+
+        // Function to remove a point and its connections
+        function removePoint(pointType, index) {
+            if (pointType === 'start' && index >= 0 && index < addedPointsStart.length) {
+                addedPointsStart.splice(index, 1);
+                var marker = markersStart.splice(index, 1)[0];
+                marker.remove();
+
+                // Update first track point reference if needed
+                if (addedPointsStart.length > 0) {
+                    firstTrackPoint = addedPointsStart[0];
+                } else {
+                    firstTrackPoint = latlngs[0];
+                }
+            } else if (pointType === 'end' && index >= 0 && index < addedPointsEnd.length) {
+                addedPointsEnd.splice(index, 1);
+                var marker = markersEnd.splice(index, 1)[0];
+                marker.remove();
+
+                // Update last track point reference if needed
+                if (addedPointsEnd.length > 0) {
+                    lastTrackPoint = addedPointsEnd[addedPointsEnd.length - 1];
+                } else {
+                    lastTrackPoint = latlngs[latlngs.length - 1];
+                }
+            }
+
+            redrawLines();
+
+            // Reset current selection
+            currentSelectedPoint = null;
+        }
+
+        // Function to undo the last point added
+        function undoLastPoint() {
+            if (addToBeginning && addedPointsStart.length > 0) {
+                // Remove first point from start points
+                addedPointsStart.shift();
+                var marker = markersStart.shift();
+                marker.remove();
+
+                // Update first track point reference
+                firstTrackPoint = addedPointsStart.length > 0 ?
+                    addedPointsStart[0] : latlngs[0];
+            } else if (!addToBeginning && addedPointsEnd.length > 0) {
+                // Remove last point from end points
+                addedPointsEnd.pop();
+                var marker = markersEnd.pop();
+                marker.remove();
+
+                // Update last track point reference
+                lastTrackPoint = addedPointsEnd.length > 0 ?
+                    addedPointsEnd[addedPointsEnd.length - 1] : latlngs[latlngs.length - 1];
+            }
+
+            redrawLines();
+        }
+
+        // Function to update visual indicators for points
+        function updatePointsVisual() {
+            // Clear existing visual indicators
+            markersStart.forEach(marker => {
+                marker.setPopupContent(addToBeginning ? "Start Point" : "Beginning Point");
+            });
+
+            markersEnd.forEach(marker => {
+                marker.setPopupContent(addToBeginning ? "End Point" : "End Point");
+            });
+
+            redrawLines();
+        }
+
+        // Function to redraw polylines
+        function redrawLines() {
+            // Remove existing lines
+            if (polyline) {
+                polyline.remove();
+            }
+
+            linesStart.forEach(line => line.remove());
+            linesEnd.forEach(line => line.remove());
+            linesStart = [];
+            linesEnd = [];
+
+            // Draw each section separately, but don't create a combined path
+
+            // Draw the original track in blue
+            if (latlngs.length > 1) {
+                polyline = L.polyline(latlngs, { color: "blue" }).addTo(map);
+            }
+
+            // Draw start points in green (only if there are any)
+            if (addedPointsStart.length > 0) {
+                // Connect start points to the first original track point, but as a separate line
+                var startLine = L.polyline([...addedPointsStart, latlngs[0]], { color: "green" }).addTo(map);
+                linesStart.push(startLine);
+            }
+
+            // Draw end points in red (only if there are any)
+            if (addedPointsEnd.length > 0) {
+                // Connect last original track point to the end points, but as a separate line
+                var endLine = L.polyline([latlngs[latlngs.length - 1], ...addedPointsEnd], { color: "red" }).addTo(map);
+                linesEnd.push(endLine);
+            }
+
+            // Create a bounds object that includes all points for proper map fitting
+            if (latlngs.length > 0 || addedPointsStart.length > 0 || addedPointsEnd.length > 0) {
+                var allPointsForBounds = [...addedPointsStart, ...latlngs, ...addedPointsEnd];
+                map.fitBounds(allPointsForBounds);
+            }
+        }
+
+        // Handle form submission
+        document.querySelector("form").addEventListener("submit", function () {
+            // Keep track of which points are start vs. end points
+            var newPointsData = {
+                startPoints: addedPointsStart,
+                endPoints: addedPointsEnd,
+                addToBeginning: addToBeginning
+            };
+
+            // Stringify the entire structure to preserve the separation
+            document.getElementById("new_points").value = JSON.stringify(newPointsData);
+            document.getElementById("add_to_beginning").value = addToBeginning.toString();
+        });
+
+        // Make removePoint function globally available
+        window.removePoint = removePoint;
+    </script>
+</body>
+
+</html>
+
+

@@ -1,0 +1,36 @@
+<!doctype html>
+{% load static %}
+<html lang="en" id="html">
+
+<head>
+    <title>Road Excel Generator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Road Excel Generator</h1>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <label>Road ID</label>
+            <input type="number" name="road_id" required>
+
+            <label>Road Type</label>
+            <select name="road_type" required>
+                <option value="">Select</option>
+                <option value="mcw">MCW</option>
+                <option value="service">Service</option>
+            </select>
+
+            <button type="submit">Generate Excel</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

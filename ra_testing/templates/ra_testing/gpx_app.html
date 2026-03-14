@@ -1,0 +1,434 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <style>
+          /* 
+        --------------
+        Global Styles
+        --------------
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+        padding: 20px;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .error-message {
+        background-color: #fff;
+        color: #dc3545;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      h1 {
+        color: #437383;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      h2 {
+        color: #437383;
+        margin: 1rem 0;
+        font-size: 1.4rem;
+      }
+
+      p {
+        margin-bottom: 1rem;
+        line-height: 1.5;
+        color: #333;
+      }
+
+      /* 
+        --------------
+        Map Area
+        --------------
+      */
+      .area {
+        background-color: #ffffff;
+        width: 90%;
+        max-width: 1200px;
+        padding: 2rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 2rem auto;
+      }
+
+      #map {
+        width: 100%;
+        height: 500px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      #result {
+        font-size: 16px;
+        font-weight: 500;
+        color: #437383;
+        margin: 1rem 0;
+        text-align: center;
+        padding: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 4px;
+      }
+
+      /* 
+        --------------
+        Form Elements
+        --------------
+      */
+      form {
+        margin: 1rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      input[type="text"],
+      input[type="file"] {
+        width: 100%;
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="file"]:focus {
+        outline: none;
+        border-color: #437383;
+        box-shadow: 0 0 0 2px rgba(11, 107, 63, 0.1);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #437383;
+        font-weight: 500;
+      }
+
+      /* 
+        --------------
+        Buttons
+        --------------
+      */
+      button,
+      .btn-upload,
+      #nextRoad,
+      #download {
+        background-color: #437383;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        margin: 0.5rem 0;
+      }
+
+      button:hover,
+      .btn-upload:hover,
+      #nextRoad:hover,
+      #download:hover {
+        background-color: #72A2B3;
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active,
+      .btn-upload:active,
+      #nextRoad:active,
+      #download:active {
+        transform: translateY(0);
+      }
+
+      /* 
+        --------------
+        Table Styles
+        --------------
+      */
+      .table-container {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin: 1rem 0;
+        background: white;
+      }
+
+      .table-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .table-container::-webkit-scrollbar-thumb {
+        background: #437383;
+        border-radius: 4px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      th,
+      td {
+        padding: 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f5f5f5;
+        color: #437383;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      /* 
+        --------------
+        Distance Labels
+        --------------
+      */
+      .distance-label {
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid #437383;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 14px;
+        pointer-events: none;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 
+        --------------
+        Road Input Section
+        --------------
+      */
+      .road-input {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+      }
+
+      .road-input input[type="text"] {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .road-input button {
+        margin: 0;
+      }
+
+      /* 
+        --------------
+        Responsive Design
+        --------------
+      */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .area {
+          width: 95%;
+          padding: 1rem;
+        }
+
+        #map {
+          height: 400px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button,
+        .btn-upload,
+        #nextRoad,
+        #download {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.9rem;
+          width: 100%;
+        }
+
+        .road-input {
+          flex-direction: column;
+        }
+
+        .road-input input[type="text"] {
+          width: 100%;
+        }
+
+        th,
+        td {
+          padding: 0.6rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      /* 
+        --------------
+        Utility Classes
+        --------------
+      */
+      .text-center {
+        text-align: center;
+      }
+
+      .mt-1 {
+        margin-top: 0.5rem;
+      }
+
+      .mt-2 {
+        margin-top: 1rem;
+      }
+
+      .mb-1 {
+        margin-bottom: 0.5rem;
+      }
+
+      .mb-2 {
+        margin-bottom: 1rem;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .flex-col {
+        flex-direction: column;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .gap-1 {
+        gap: 0.5rem;
+      }
+
+      .gap-2 {
+        gap: 1rem;
+      }
+  </style>
+  <title>GPX Route Creator</title>
+
+  <!-- Custom CSS -->
+  {% comment %} <link rel="stylesheet" href="{% static 'ra_testing/css/gpx_app.css' %}"> {% endcomment %}
+
+  <!-- Add CSRF Token -->
+  {% csrf_token %}
+
+  <!-- Google Maps API with Geometry Library -->
+  <script>
+    function handleMapsError() {
+      console.error('Google Maps failed to load');
+      document.body.innerHTML = '<div class="error-message">Failed to load Google Maps. Please check your internet connection and try again.</div>';
+    }
+  </script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtVXosLTQjTMVm2K9BJf55HZAkNAGTr4U&libraries=geometry&callback=initMap"
+    async defer onerror="handleMapsError()"></script>
+</head>
+
+<body>
+  <div class="area">
+    <h1>GPX Route Creator</h1>
+
+    <p class="text-center mb-2">
+      Click on the map to place markers. A line is drawn through all points in sequence.<br>
+      Each segment's distance is labeled on the map.<br>
+      <strong>Click on a marker</strong> to remove it from the map, and the distances/line will be recalculated.
+    </p>
+
+    <div class="map-controls mb-2">
+      <button id="undoButton" title="Undo last change (Ctrl+Z)" disabled>
+        <span class="button-content">
+          ↩ Undo
+          <small>(Ctrl+Z)</small>
+        </span>
+      </button>
+    </div>
+
+    <div id="map"></div>
+    <div id="result">Click the map to place your first marker...</div>
+
+    <div class="road-input">
+      <label for="roadName">Enter the name for Road:</label>
+      <input type="text" id="roadName" name="roadName" placeholder="Enter road name">
+      <button id="nextRoad">Start</button>
+    </div>
+
+    <h2>Roads Information</h2>
+    <div class="table-container">
+      <table id="roadsTable">
+        <thead>
+          <tr>
+            <th>Road Name</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-2">
+      <button id="download" class="download-btn">Download GPX</button>
+    </div>
+  </div>
+
+  <!-- Custom JS -->
+  <script src="{% static 'ra_testing/js/gpx_app.js' %}"></script>
+</body>
+
+</html>

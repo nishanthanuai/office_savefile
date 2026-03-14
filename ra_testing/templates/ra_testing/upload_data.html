@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            min-height: 100vh;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+        }
+
+        header {
+            background-color: #437383;
+            color: #fff;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* Form Container */
+        main {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .form-group input[type="file"],
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button.btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #437383;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        button.btn:hover {
+            background-color: #72A2B3;
+            color: #000;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            main {
+                padding: 20px;
+            }
+
+            header {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Upload Data to Road Athena</h1>
+    </header>
+    <main>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'upload_data' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="json_file">Choose JSON File:</label>
+                <input type="file" id="json_file" name="json_file" accept=".json">
+            </div>
+            <div class="form-group">
+                <label for="road_id">Road ID (for JSON):</label>
+                <input type="text" id="road_id" name="road_id" placeholder="Enter Road ID">
+            </div>
+            <div class="form-group">
+                <label for="excel_file">Choose Excel File (Optional):</label>
+                <input type="file" id="excel_file" name="excel_file" accept=".xlsx">
+            </div>
+            <div class="form-group">
+                <label for="survey_id">Survey ID (for Excel):</label>
+                <input type="text" id="survey_id" name="survey_id" placeholder="Enter Survey ID">
+            </div>
+            <div class="form-group">
+                <label for="processed_videos_link">Processed Videos Link (Optional):</label>
+                <input type="text" id="processed_videos_link" name="processed_videos_link" placeholder="Insert Link for Video">
+            </div>
+            <button type="submit" class="btn">Upload</button>
+        </form>
+    </main>
+</body>
+</html>

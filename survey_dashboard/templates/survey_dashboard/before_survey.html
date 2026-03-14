@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Survey Dashboard</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Poppins', sans-serif;
+                min-height: 100vh;
+                background: linear-gradient(180deg,rgba(242, 242, 242, 1) 0%, rgba(230, 230, 230, 1) 100%);
+                color: #fff;
+            }
+    
+            header {
+                background: rgba(67, 115, 131, 0.9);
+                backdrop-filter: blur(12px);
+                padding: 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+    
+            header h1 {
+                font-size: 2rem;
+                font-weight: 600;
+            }
+    
+            .left-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+    
+            .left-section span {
+                font-weight: 300;
+                font-size: 1rem;
+                color: rgba(243, 210, 109, 1);
+            }
+    
+            .log_btn {
+                background-color: #f44336;
+                color: #fff;
+                border: none;
+                padding: 0.5rem 1.1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                transition: 0.3s ease;
+            }
+    
+            .log_btn:hover {
+                background-color: #f1f1f1;
+                transform: scale(1.05);
+            }
+
+            
+    
+            .btn {
+                display: inline-block;
+                background-color: #004d40;
+                color: #fff;
+                padding: 0.75rem 1.5rem;
+                text-decoration: none;
+                border-radius: 12px;
+                margin-top: 1rem;
+                font-size: 1.125rem;
+                transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+    
+            .btn:hover {
+                background-color: #00332e;
+                transform: scale(1.05);
+                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+            }
+    
+            /* DataTables Enhancements */
+            .datatable-search {
+                padding: 0.5rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                margin-bottom: 1rem;
+                width: 100%;
+                color: #4b5563;
+                font-size: 0.875rem;
+                max-width: 300px;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                
+            }
+    
+            .datatable-search:focus {
+                padding: 0.5rem 1rem;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+    
+            .datatable-dropdown {
+                position: relative;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+    
+            .datatable-dropdown label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #4b5563;
+                font-size: 0.875rem;
+            }
+    
+            .datatable-dropdown select {
+                padding: 0.5rem 2rem 0.5rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                background-color: white;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+                background-position: right 0.5rem center;
+                background-repeat: no-repeat;
+                background-size: 1.5em 1.5em;
+                appearance: none;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+    
+            .datatable-dropdown select:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+    
+            .datatable-info {
+                color: #6b7280;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
+            
+            .datatable-top {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+    
+            @media (min-width: 768px) {
+                .datatable-top {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+    
+                .datatable-dropdown {
+                    margin-bottom: 0;
+                }
+    
+                .datatable-info {
+                    margin-bottom: 0;
+                }
+            }
+        </style>
+    </head>
+    
+    <body>
+        <header>
+            <h1>RA Survey Tracker Dashboard</h1>
+            <div class="left-section">
+                <span>{{ user.email }}</span>
+                {% comment %} <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="log_btn">Logout</button>
+                </form> {% endcomment %}
+            </div>
+        </header>
+        
+        <main class="container mx-auto p-6 bg-white w-full rounded-lg shadow-md mt-4">      
+    
+    <div class="bg-white p-6 ">
+
+        <!-- Before Survey Table -->
+        <h2 class="text-2xl font-semibold text-center mb-2 text-gray-600 py-6">Before Survey (Surveyor's Data)</h2>
+        <div class="overflow-x-auto">
+            <table id="before-survey-table" class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg">
+                <thead class="bg-gray-200"> 
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">ID</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Surveyor</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Driver</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Vehicle No</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Start Odometer</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Start Date</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">Start Location</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">End Odometer</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">End Location</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">End Date</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider bg-gray-300 text-gray-700">bill</th> 
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for trip in trips %}
+                    <tr class="hover:bg-blue-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ trip.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.surveyor_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.driver_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.vehicle_number }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.start_odometer_reading }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.start_date }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{{ trip.start_location }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.end_odometer_reading }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">{{ trip.end_location }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ trip.end_date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {% if trip.bills %}
+                                {% if trip.bills|length == 1 %}
+                                    <!-- Single image - show popup button only -->
+                                    <button onclick="openImageModal('{{ trip.bills.0.image }}')" class="text-blue-600 hover:text-blue-800 underline">
+                                        View Bill
+                                    </button>
+                                {% else %}
+                                    <!-- Multiple images - show dropdown -->
+                                    <div class="relative inline-block text-left">
+                                        <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none" 
+                                                onclick="toggleDropdown(this)">
+                                            View Bills ({{ trip.bills|length }})
+                                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        
+                                        <div class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                                            <div class="py-1" role="menu">
+                                                {% for bill in trip.bills.all %} <!-- Use `.all` to retrieve related objects -->
+                                                <div class="px-4 py-2 hover:bg-gray-100" role="menuitem">
+                                                    <button onclick="openImageModal('{{ bill.image }}')" class="text-blue-600 hover:text-blue-800 underline w-full text-left">
+                                                        View Bill {{ forloop.counter }}
+                                                    </button>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                No Image
+                            {% endif %}
+                        </td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="px-6 py-8 text-center text-gray-500 text-lg">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                No data available
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+    </div>
+    <script>
+        document.getElementById("tripForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            // Get form values
+            const tripId = document.getElementById("trip_id").value;
+            const surveyorName = document.getElementById("surveyor_name").value;
+            const driverName = document.getElementById("driver_name").value;
+            const location = document.getElementById("location").value;
+            const date = document.getElementById("date").value;
+            const vehicleNumber = document.getElementById("vehicle_number").value;
+    
+            // Validation checks
+            if (!tripId) {
+                alert("Please enter Trip ID");
+                return;
+            }
+            if (!/^\d+$/.test(tripId)) {
+                alert("Trip ID must be a number");
+                return;
+            }
+            if (!surveyorName) {
+                alert("Please enter Surveyor Name");
+                return;
+            }
+            if (!/^[a-zA-Z\s]+$/.test(surveyorName)) {
+                alert("Surveyor Name must contain only letters");
+                return;
+            }
+            if (!driverName) {
+                alert("Please enter Driver Name");
+                return;
+            }
+            if (!/^[a-zA-Z\s]+$/.test(driverName)) {
+                alert("Driver Name must contain only letters");
+                return;
+            }
+            if (!location) {
+                alert("Please enter Location");
+                return;
+            }
+            if (!date) {
+                alert("Please select Date");
+                return;
+            }
+            if (!vehicleNumber) {
+                alert("Please enter Vehicle Number");
+                return;
+            }
+    
+            let formData = {
+                trip_id: tripId,
+                surveyor_name: surveyorName,
+                driver_name: driverName,
+                location: location,
+                date: date,
+                vehicle_number: vehicleNumber
+            };
+    
+            fetch("{% url 'survey_dashboard:submit_trip' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Trip added successfully!");
+    
+                    // Append new row to table
+                    let newRow = `<tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${formData.trip_id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formData.surveyor_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formData.driver_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formData.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formData.date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formData.vehicle_number}</td>
+                    </tr>`;
+    
+                    document.getElementById("tripTable").innerHTML += newRow;
+    
+                    // Reset form
+                    document.getElementById("tripForm").reset();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => alert("Error: " + error));
+        });
+    </script>
+
+
+    <script>
+        
+            // Function to initialize DataTable with common configuration
+            function initDataTable(tableId) {
+                if (document.getElementById(tableId) && typeof simpleDatatables.DataTable !== 'undefined') {
+                    return new simpleDatatables.DataTable(`#${tableId}`, {
+                        paging: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30],
+                        sortable: false,
+                        classes: {
+                            wrapper: "p-4",
+                            active: "bg-gray-500 text-white",
+                            disabled: "opacity-50 cursor-not-allowed",
+                            paginationList: "flex justify-center space-x-2",
+                            paginationListItem: "bg-gray-200 px-3 py-1 rounded",
+                            paginationListItemLink: "text-gray-700",
+                            input: "datatable-input",
+                            search: "datatable-search",
+                            dropdown: "datatable-dropdown",
+                            selector: "datatable-selector",
+                            info: "datatable-info"
+                        },
+                        labels: {
+                            placeholder: "Search...",
+                            searchTitle: "Search within table",
+                            perPage: "entries per page",
+                            noRows: "No entries found",
+                            info: "Showing {start} to {end} of {rows} entries"
+                        }
+                    });
+                }
+                return null;
+            }
+        
+            // Initialize both tables
+            const beforeSurveyTable = initDataTable("before-survey-table");
+            const duringSurveyTable = initDataTable("during-survey-table");
+        </script>
+
+       
+<script>
+    function toggleDropdown(button) {
+        const dropdown = button.nextElementSibling;
+        dropdown.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.relative.inline-block.text-left')) {
+            document.querySelectorAll('.origin-top-right').forEach(dropdown => {
+                dropdown.classList.add('hidden');
+            });
+        }
+    });
+
+    function openImageModal(imageUrl) {
+        // Create a new div for the modal
+        let modal = document.createElement('div');
+        modal.innerHTML = `
+            <div id="imageModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white p-4 rounded-lg shadow-lg max-w-4xl">
+                    <img src="${imageUrl}" alt="Bill Image" class="max-w-full max-h-[80vh] rounded-lg">
+                    <div class="text-center mt-4">
+                        <button onclick="closeImageModal()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    function closeImageModal() {
+        let modal = document.getElementById('imageModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+</script>
+    
+    
+</body>
+</html>

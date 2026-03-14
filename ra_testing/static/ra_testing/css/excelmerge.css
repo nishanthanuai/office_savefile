@@ -1,0 +1,168 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+:root {
+    /* --primary-color: #006400;
+    --secondary-color: #008000; */
+    --background-color: #f0f8f0;
+    --container-bg: #ffffff;
+    --text-color: #333333;
+}
+
+
+
+#wrapper {
+    background-color: var(--background-color);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b9fbc0 100%);
+}
+
+#head {
+    padding: 1.5rem;
+    background-color: #00796b;
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#main {
+    padding: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.button,
+button {
+    background-color: #004d40;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover,
+button:hover {
+    background-color: #00332e;
+}
+
+#form-Container,
+#list-Container {
+    background-color: var(--container-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+#formArea {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#formArea label {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+#formArea select,
+#formArea input[type="text"],
+#formArea input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+#formArea select:focus,
+#formArea input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 100, 0, 0.1);
+}
+
+#list-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#fileList {
+    margin-bottom: 1.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+#uploadStatus,
+#deleteStatus,
+#scriptStatus {
+    list-style: none;
+    margin-top: 1rem;
+    color: var(--text-color);
+}
+
+#download-excel-btn {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    #head {
+        font-size: 1.5rem;
+        padding: 1rem;
+    }
+
+    #main {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    #form-Container,
+    #list-Container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #head {
+        font-size: 1.25rem;
+    }
+
+    #main {
+        padding: 0.5rem;
+    }
+
+    #form-Container,
+    #list-Container {
+        padding: 1rem;
+    }
+
+    .button,
+    button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}

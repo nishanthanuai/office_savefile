@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate and Patch Excel to Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Main Layout */
+            --bg-body: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --card-border: #E2E8F0;
+            /* Typography */
+            --text-primary: #0F172A;
+            --text-muted: #475569;
+            /* Action Colors */
+            --btn-primary: #2563EB;
+            --btn-accent: #14B8A6;
+            --hover-bg: #DBEAFE;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --text-primary: #e6e6e6;
+            --text-muted: #9a9a9a;
+            --card-bg: #1c1c1c;
+            --card-border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Dark mode overrides for Bootstrap controls */
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
+
+        }
+
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* Use the Primary Blue for main buttons */
+        .btn-primary {
+            background-color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px;
+        }
+
+        .theme-toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .go-back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+
+        #go_back_btn,
+        #theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+        }
+
+        #go_back_btn:hover,
+        #theme-toggle:hover {
+            background-color: var(--hover-bg);
+            color: var(--btn-primary);
+            border-color: var(--btn-primary);
+        }
+
+        #go_back_btn:hover {
+            background-color: var(--hover-bg);
+            color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            transform: translateX(-2px);
+        }
+
+        /* Dark Mode Specific Adjustments */
+        [data-theme="dark"] #theme-toggle,
+        [data-theme="dark"] #go_back_btn {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #theme-toggle:hover,
+        [data-theme="dark"] #go_back_btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border-color: var(--text-muted);
+        }
+
+        .form-container {
+            width: 100%;
+            /* max-width: 450px; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            flex-direction: column;
+        }
+
+        .alert-danger {
+            border-radius: 8px;
+        }
+
+        /* Styling for the results grid */
+        .results-grid {
+            display: grid;
+            /* Automatically fill columns based on container width */
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            /* Space between cards */
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* Ensure cards take full width of their grid cell */
+        .results-grid .card {
+            margin-bottom: 0 !important;
+            /* Grid gap handles spacing */
+            height: 100%;
+            /* Make all cards same height if content grows */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="go-back-btn">
+        <a href="/" class="btn btn-sm btn-outline-secondary" id="go_back_btn">← Menu</a>
+    </div>
+
+    <div class="theme-toggle-btn">
+        <button class="btn btn-outline-secondary" id="theme-toggle">
+            <span id="theme-icon">🌙</span> Dark Mode
+        </button>
+    </div>
+
+    <div class="form-container">
+        <div class="card p-4 p-md-5" style="max-width: 800px;">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-2" style="font-size: 3rem;">Road Excel Generator</h2>
+                <p class="text-muted small" style="font-size: 2rem;">Generate and patch the excel report to the
+                    dashboard.</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger mb-4 text-center p-2" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- 1. Add action="{% url 'commence_generate_and_patch_excel' %}" -->
+            <form method="POST" action="{% url 'commence_generate_and_patch_excel' %}" id="pipelineForm">
+                {% csrf_token %}
+
+                <div class="mb-3" style="text-align: center;">
+                    <P style="color: red; font-size: 1.5rem;">Don't Use Both Survey ID and Road ID At The Same Time</P>
+                    <label class="form-label fw-medium" style="font-size: 1.9rem;">Survey ID OR Road ID </label>
+                    <!-- 2. The most important thing here is name="survey_id" -->
+                    <input type="text" id="surveyId" name="survey_id" class="form-control"
+                        placeholder="Enter Survey ID OR Road ID" style="font-size: 1.9rem;" required>
+                </div>
+                <div class="d-grid mt-4">
+                    <!-- 3. Standard submit button. -->
+                    <button type="submit" id="submitBtn"
+                        class="btn btn-primary d-flex justify-content-center align-items-center gap-2">
+                        <span class="spinner-border spinner-border-sm" id="btnSpinner" role="status"
+                            style="display:none;"></span>
+                        <span id="btnText" style="font-size: 1.5rem;">Run Pipeline</span>
+                    </button>
+                </div>
+            </form>
+            <!-- 4. Handle showing the success/error messages from Django context -->
+            {% if error %}
+            <div class="alert alert-danger mt-4">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+            <div class="alert alert-success mt-4">{{ success }}</div>
+            <!-- 5. Optional: If your view passes back downloadable files -->
+            {% if files %}
+            <h5>Downloads:</h5>
+            <ul class="list-group" style="width: 100%;">
+                {% for file in files %}
+                <li class="list-group-item">
+                    <a href="{{ file.url }}" class="btn btn-sm btn-outline-primary" download>
+                        📥 Download Excel for Road {{ file.road_id }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endif %}
+        </div>
+        <!-- Real-Time Progress Bar Section -->
+        <div id="progressArea" style="display: none; width: 70%;" class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 1.5rem;">
+                <span id="statusText" class="text-muted">Preparing pipeline...</span>
+                <span id="progressPercentage" class="fw-bold">0%</span>
+            </div>
+            <div class="progress" style="height: 20px; border-radius: 10px; border: 1px solid var(--card-border);">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                    role="progressbar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- This is where we will inject success messages or download links via JS -->
+        <div id="resultsContainer" class="mt-4" style="    display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 90%;"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.getElementById('htmlRoot');
+        function applyTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeToggle.innerHTML = '<span id="theme-icon">☀️</span> Light Mode';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeToggle.innerHTML = '<span id="theme-icon">🌙</span> Dark Mode';
+            }
+        }
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
+    <script>
+        // 1. Grab references to the elements in your HTML
+        const form = document.getElementById('pipelineForm');
+        const surveyInput = document.getElementById('surveyId');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+
+        // 2. Add an event listener to intercept the form submission
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const surveyIdValue = surveyInput.value;
+
+            // UI Reset
+            btnText.textContent = "Processing...";
+            btnSpinner.style.display = "inline-block";
+            submitBtn.disabled = true;
+            resultsContainer.innerHTML = "";
+            const progArea = document.getElementById('progressArea');
+            const pBar = document.getElementById('progressBar');
+            const pText = document.getElementById('statusText');
+            const pPercent = document.getElementById('progressPercentage');
+
+            progArea.style.display = "block";
+            pBar.style.width = "0%";
+            pPercent.textContent = "0%";
+
+            try {
+                const response = await fetch('{% url "commence_generate_and_patch_excel" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ survey_id: surveyIdValue })
+                });
+
+                // Use a Reader to consume the stream
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split("\n");
+
+                    for (let line of lines) {
+                        if (line.startsWith("data: ")) {
+                            const data = JSON.parse(line.replace("data: ", ""));
+
+                            if (data.type === "progress") {
+                                pText.textContent = data.message;
+                                // Animate Bar
+                                let w = parseInt(pBar.style.width) || 0;
+                                if (w < 95) {
+                                    pBar.style.width = (w + 2) + "%";
+                                    pPercent.textContent = pBar.style.width;
+                                }
+                            }
+                            else if (data.type === "result") {
+                                pBar.style.width = "100%";
+                                pPercent.textContent = "100%";
+                                pText.textContent = "Pipeline Completed Successfully!";
+                                // Renders the Grid results using the results helper
+                                renderResultsGrid(data.road_results, data.survey_id);
+                            }
+                            else if (data.type === "error") {
+                                resultsContainer.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.message}</div>`;
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                resultsContainer.innerHTML = `<div class="alert alert-danger">Connection Failed: ${error.message}</div>`;
+            } finally {
+                btnText.textContent = "Run Pipeline";
+                btnSpinner.style.display = "none";
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Helper function to render your grid cards
+        function renderResultsGrid(roads, surveyId) {
+            let html = `
+    <div style="margin-top:1.5rem; width: 100%;">
+        <div class="alert alert-success d-flex align-items-center gap-2" style="border-radius:10px;">
+            ✅ <strong>Pipeline Finished!</strong>&nbsp; Survey ID: <strong>${surveyId}</strong>
+        </div>
+        <div class="results-grid">`;
+
+            roads.forEach(road => {
+                const stages = road.stages;
+                const statusTable = `
+            <table class="table table-sm table-bordered mb-0" style="font-size:0.82rem;">
+                <thead><tr>
+                    <th colspan="2" class="table-light text-center">Fetch</th>
+                    <th colspan="5" class="table-light text-center">Process</th>
+                    <th colspan="2" class="table-light text-center">Excel</th>
+                </tr></thead>
+                <tbody class="text-center"><tr>
+                    <td>${stages.fetch.json ? '✅' : '❌'}</td><td>${stages.fetch.gpx ? '✅' : '❌'}</td>
+                    <td>${stages.process.json_cleaner ? '✅' : '❌'}</td><td>${stages.process.gpx_converter ? '✅' : '❌'}</td>
+                    <td>${stages.process.category ? '✅' : '❌'}</td><td>${stages.process.side_check ? '✅' : '❌'}</td>
+                    <td>${stages.process.json_patch ? '✅' : '❌'}</td>
+                    <td>${stages.excel.excel_generated ? '✅' : '❌'}</td><td>${stages.excel.excel_patched ? '✅' : '❌'}</td>
+                </tr></tbody>
+            </table>`;
+
+                html += `
+            <div class="card" style="border-radius:12px; overflow:hidden; display: flex; flex-direction: column;">
+                <div class="card-header d-flex justify-content-between align-items-center py-2 px-3"
+                     style="background: ${road.road_type.toLowerCase().includes('mcw') ? '#dbeafe' : '#dcfce7'}; flex-shrink: 0;">
+                    <span>🛣️ <strong>Road: ${road.road_id}</strong></span>
+                    <a href="${road.excel_url}" class="btn btn-sm btn-outline-primary" download style="font-size:0.75rem;">📥 Download</a>
+                </div>
+                <div class="card-body p-2">${statusTable}</div>
+            </div>`;
+            });
+            html += `</div></div>`;
+            document.getElementById('resultsContainer').innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>

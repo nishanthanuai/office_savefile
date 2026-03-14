@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload GPX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+        color: #000;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    header {
+        background-color: rgba(67, 115, 131, 0.9);
+        color: #fff;
+        width: 100%;
+
+        text-align: center;
+        padding: 1.25rem 0;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    main {
+        flex: 1;
+        width: 100%;
+        padding: 7rem 2rem 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .upload-container {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .upload-container h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+        padding-bottom: 0.5rem;
+    }
+
+    .upload-container p {
+        font-size: 1rem;
+        color: #000;
+        margin-bottom: 1rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    form p {
+        width: 100%;
+        max-width: 400px;
+        text-align: left;
+        margin: 0;
+    }
+
+    .upload-container input[type="file"],
+    .upload-container input[type="number"] {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .upload-container button {
+        background-color: #437383;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    .upload-container button:hover {
+        background-color: #72A2B3;
+        color: #000;
+        transform: scale(1.05);
+    }
+
+    /* Responsive for mobile */
+    @media (max-width: 600px) {
+        .upload-container {
+            padding: 1.5rem;
+        }
+
+        .upload-container h2 {
+            font-size: 1.5rem;
+        }
+
+        form p {
+            max-width: 100%;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+    <header>
+        <h1>GPX File Upload</h1>
+    </header>
+  <div class="upload-container">
+    <h2>Upload Your GPX File</h2>
+    <form id="uploadForm" action="{% url 'gpx_processor:upload' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" id="uploadButton" class="btn-upload">Upload</button>
+    </form>
+    
+  </div>
+</body>
+
+</html>

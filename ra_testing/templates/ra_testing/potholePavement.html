@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Pavement JSON File</title>
+    {% comment %}
+    <link rel="stylesheet" href="{% static 'ra_testing/styles.css' %}"> {% endcomment %}
+    <link href="https://fonts.googleapis.com/css2?family=popins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: linear-gradient(180deg, rgb(255, 255, 255) 0%, rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --container-bg: #ffffff;
+            --text-primary: #333;
+            --accent-teal: #437383;
+            --input-border: #ddd;
+            --btn-bg: linear-gradient(to right, #437383, #437383);
+            --btn-menu-bg: #ffffff;
+            --btn-menu-text: #333;
+            --error-color: #cc0000;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --header-bg: rgba(30, 30, 30, 0.95);
+            --container-bg: #1c1c1c;
+            --text-primary: #e0e0e0;
+            --accent-teal: #e0e0e0;
+            --input-border: #333;
+            --btn-bg: #2a2a2a;
+            --btn-menu-bg: #2a2a2a;
+            --btn-menu-text: #e0e0e0;
+            --error-color: #ff6b6b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        header h1 {
+            color: #fff;
+            font-size: 1.8rem;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            right: 2rem;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+            padding: 2rem;
+            margin-top: 80px;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        .container h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            color: var(--accent-teal);
+        }
+
+        .container p {
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .container input[type="text"] {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            border: 1px solid var(--input-border);
+            background-color: var(--container-bg);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .container button {
+            display: inline-block;
+            background: var(--btn-bg);
+            background-color: #2a2a2a;
+            /* Fallback */
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .container button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .error-card {
+            color: var(--error-color);
+            padding: 15px 20px;
+        }
+
+
+        #theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Default (Light Mode) */
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        #theme-toggle:hover {
+            background-color: var(--hover-bg);
+            color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            transform: translateX(-2px);
+            /* Subtle nudge to indicate the "back" direction */
+        }
+
+        /* Dark Mode Specific Adjustments */
+        [data-theme="dark"] #theme-toggle {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            /* Brighter white for better contrast on hover */
+            border-color: var(--text-muted);
+        }
+
+        .btn {
+            position: absolute;
+            left: 1%;
+            background-color: var(--btn-menu-bg);
+            color: var(--btn-menu-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+            justify-self: flex-start;
+            border: 1px solid var(--input-border);
+        }
+
+        .btn:hover {
+            background-color: var(--btn-menu-hover-bg);
+            color: var(--btn-menu-hover-text);
+            transform: scale(1.05);
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <a href="/" class="btn">← Menu</a>
+        <h1>Pavement Model Testing</h1>
+        <button id="theme-toggle">🌓 Dark Mode</button>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Enter Road ID </h2>
+            <form method="post" action="{% url 'pothole_pavement_testing' %}">
+                {% csrf_token %}
+                <div>
+                    <p>Enter Road ID for which you want pavement JSON file</p>
+                    {% comment %} <label for="road_id">Road ID:</label> {% endcomment %}
+                    <input type="text" name="road_id" placeholder="Enter Road ID" required>
+                </div>
+                <button type="submit">Load Pavement Data</button>
+            </form>
+            {% if error %}
+            <div id="error-message" class="error-card">
+                <i>
+                    {{ error }}
+                </i>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+<script>
+    // Theme Switcher Logic
+    const htmlRoot = document.getElementById('htmlRoot');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    function applyTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlRoot.setAttribute('data-theme', savedTheme);
+        themeToggle.innerText = savedTheme === 'dark' ? '☀️ Light Mode' : '🌓 Dark Mode';
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlRoot.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme();
+    });
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme') applyTheme();
+    });
+
+    applyTheme();
+
+    // Previous error message handler
+    window.addEventListener('DOMContentLoaded', () => {
+        const errorCard = document.getElementById('error-message');
+        if (errorCard) {
+            setTimeout(() => {
+                errorCard.style.display = 'none';
+            }, 5000);
+        }
+    });
+</script>
+
+
+</html>

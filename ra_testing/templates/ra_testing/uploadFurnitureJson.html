@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furniture Model Testing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: linear-gradient(180deg, rgb(255, 255, 255) 0%, rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            --header-bg: rgba(67, 115, 131, 0.9);
+            --container-bg: #ffffff;
+            --text-color: #000;
+            --btn-bg: #437383;
+            --btn-hover-bg: #72A2B3;
+            --btn-hover-text: #fff;
+            /* Ensure white text */
+            --input-bg: #ffffff;
+            --input-border: #ccc;
+            --error-color: #cc0000;
+
+            /* Toggle Button Variables */
+            --card-bg: #ffffff;
+            --card-border: rgba(0, 0, 0, 0.1);
+            --text-muted: #666;
+            --hover-bg: rgba(0, 0, 0, 0.05);
+            --btn-primary: #437383;
+            --btn-menu-bg: #fff;
+            --btn-menu-text: #333;
+            --btn-menu-hover-bg: #000;
+            --btn-menu-hover-text: #fff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --header-bg: rgba(30, 30, 30, 0.95);
+            --container-bg: #1c1c1c;
+            --text-color: #e0e0e0;
+            --btn-bg: #2a2a2a;
+            --btn-hover-bg: #3a3a3a;
+            --btn-hover-text: #fff;
+            /* Stay white in dark mode */
+            --input-bg: #2a2a2a;
+            --input-border: #333;
+            --error-color: #ff6b6b;
+
+            /* Toggle Button Variables */
+            --card-bg: #1c1c1c;
+            --card-border: #333;
+            --text-muted: #a0a0a0;
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --btn-primary: #e0e0e0;
+            --btn-menu-bg: #1c1c1c;
+            --btn-menu-text: #e0e0e0;
+            --btn-menu-hover-bg: #333;
+            --btn-menu-hover-text: #fff;
+        }
+
+
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: var(--bg-color);
+            /* Updated */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: var(--text-color);
+            /* Updated */
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            /* Updated */
+            color: #fff;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            /* Added for toggle positioning */
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        /* Theme Toggle Button Style */
+        #theme-toggle {
+            position: absolute;
+            right: 2rem;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            flex: 1;
+            padding: 5rem 2rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-container {
+            background-color: var(--container-bg);
+            /* Updated */
+            border-radius: 12px;
+            padding: 2rem;
+            width: 700px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, background-color 0.3s ease;
+        }
+
+        .upload-container h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            /* Updated */
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            /* Softened */
+            padding-bottom: 0.5rem;
+        }
+
+        .upload-container p {
+            font-size: 1rem;
+            font-weight: 400;
+            /* Increased from 100 for readability */
+            color: var(--text-color);
+            /* Updated */
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .upload-container input[type="number"] {
+            padding: 0.75rem;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            /* Updated */
+            background-color: var(--input-bg);
+            /* Updated */
+            color: var(--text-color);
+            /* Updated */
+            margin-bottom: 1.5rem;
+            transition: 0.3s ease;
+        }
+
+        .upload-container button {
+            background-color: var(--btn-bg);
+            /* Updated */
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .upload-container button:hover {
+            background-color: var(--btn-hover-bg);
+            color: var(--btn-hover-text);
+            /* Fixed from #000 */
+            transform: scale(1.05);
+        }
+
+
+        .error-card {
+            color: var(--error-color);
+            /* Updated */
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+
+        #theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Default (Light Mode) */
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        #theme-toggle:hover {
+            background-color: var(--hover-bg);
+            color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            transform: translateX(-2px);
+            /* Subtle nudge to indicate the "back" direction */
+        }
+
+        /* Dark Mode Specific Adjustments */
+        [data-theme="dark"] #theme-toggle {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] #theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            /* Brighter white for better contrast on hover */
+            border-color: var(--text-muted);
+        }
+
+        .btn {
+            position: absolute;
+            left: 1%;
+            background-color: var(--btn-menu-bg);
+            color: var(--btn-menu-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+            justify-self: flex-start;
+            border: 1px solid var(--input-border);
+        }
+
+        .btn:hover {
+            background-color: var(--btn-menu-hover-bg);
+            color: var(--btn-menu-hover-text);
+            transform: scale(1.05);
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <a href="/" class="btn">← Menu</a>
+        <h1>Furniture Model Testing</h1>
+        <button id="theme-toggle">🌓 Dark Mode</button>
+    </header>
+
+    <main>
+        <div class="upload-container">
+            <h2>Get Furniture JSON File</h2>
+            {% comment %} <p>Select a JSON file containing furniture data to upload.</p> {% endcomment %}
+            <p>Enter Road ID to get the Furniture JSON for Testing</p>
+
+
+            <form action="{% url 'upload_furniture_json' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% comment %} <input type="file" name="json_file" accept=".json" required> {% endcomment %}
+                <input type="number" id="numberInput" name="numberInput" placeholder="Enter Road ID">
+                <button type="submit">Upload</button>
+            </form>
+            {% if json_error %}
+            <div id="error-message" class="error-card">
+                No valid JSON found for the entered ID.
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+<script>
+    // Standard Dark Mode Logic
+    const htmlRoot = document.getElementById('htmlRoot');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    function applyTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlRoot.setAttribute('data-theme', savedTheme);
+        themeToggle.innerText = savedTheme === 'dark' ? '☀️ Light Mode' : '🌓 Dark Mode';
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlRoot.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme();
+    });
+
+    // Handle cross-tab updates
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme') applyTheme();
+    });
+
+    // Check for saved theme on load
+    applyTheme();
+
+    // Your existing error handling script
+    window.addEventListener('DOMContentLoaded', () => {
+        const errorCard = document.getElementById('error-message');
+        if (errorCard) {
+            setTimeout(() => {
+                errorCard.style.display = 'none';
+            }, 5000);
+        }
+    });
+</script>
+
+
+</html>

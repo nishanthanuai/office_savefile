@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - RA Testing</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(180deg, rgba(241, 241, 241, 1) 0%, rgba(193, 206, 210, 1) 30%, rgba(154, 178, 186, 1) 63%, rgba(107, 144, 156, 1) 100%);
+        }
+
+        .form-wrapper {
+            display: flex;
+            width: 500px;
+            height: 500px;
+            background-color: rgba(255, 255, 255, 0.6);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+            overflow: hidden;
+        }
+
+        form {
+            width: 100%;
+            padding: 50px 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        form * {
+            letter-spacing: 0.5px;
+            outline: none;
+            border: none;
+        }
+
+        form h3 {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 42px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #437383;
+        }
+
+        label {
+            color: #437383;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            display: block;
+            height: 50px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            padding: 0 10px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 300;
+            color: white;
+        }
+
+        ::placeholder {
+            color: gold;
+        }
+
+        .show-password {
+            font-size: 0.9em;
+            margin-top: 10px;
+            color: #437383;
+            display: flex;
+            align-items: center;
+        }
+
+        .show-password input {
+            margin-right: 6px;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            background-color: #437383;
+            color: #f1f1f1;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .error {
+            margin-top: 15px;
+            color: #ff6b6b;
+            font-weight: 500;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+    <div class="form-wrapper">
+        <form method="post">
+            {% csrf_token %}
+            <h3>RA Testing Login</h3>
+
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" placeholder="Enter your Email" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Enter your Password" required>
+
+            <label class="show-password">
+                <input type="checkbox" onclick="togglePassword()"> Show Password
+            </label>
+
+            <button type="submit">Login</button>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Viewer</title>
+    <!-- css and cdn js  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'ra_testing/css/process_img.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+</head>
+
+<body>
+
+
+    <div class="container-fluid border px-3" style="height: 100vh; width: 100%;">
+        <!-- go back button  -->
+
+        <!-- top bar  -->
+        <!-- <div class="text-center">
+            <h2>Image Viewer</h2>
+            <p>Navigate through the uploaded images.</p>
+        </div> -->
+
+        <!-- image block + settings block  -->
+        <div class="card" style="height: 85vh; width: 100%;">
+
+            <div class="card-body text-center canvas-container position-relative">
+                <!-- Canvas -->
+                <div class="text-center d-flex justify-content-around">
+                    <div class="container-fluid canvas-box flex-grow-1" style="flex-basis: 75%">
+                        <!-- Previous Icon -->
+                        {% if previous_image %}
+                        <a
+                            href="{% url 'process_images' previous_image.name %}?surveyId={{ survey_id }}&roadId={{ road_id }}&model_type={{ model_type }}">
+                            <button id="prevImageButton" class="btn position-absolute" style="
+										top: 50%;
+										left: 20px;
+										transform: translateY(-50%);
+										z-index: 1;
+									">
+                                {% comment %} &larr; {% endcomment %}
+                                <img src="{% static 'ra_testing/icons/left_icon.png' %}" alt="Next"
+                                    style="height: 30px; width: 30px" />
+                            </button>
+                        </a>
+                        {% endif %}
+
+                        <canvas id="imageCanvas" class="img-fluid rounded position-relative">
+
+                        </canvas>
+
+                        <h4 class="position-absolute text-center z-index-10" style="
+                                                left: 50%;
+                                                transform: translateX(-50%);
+                                                color: #fff;
+                                                background: rgba(0, 0, 0, 0.6);
+                                                padding: 6px 14px;
+                                                border-radius: 6px;
+                                                font-size: 0.9rem;
+                                            ">
+                            Frame: {{current_frame_number}} Out Of {{total_frames}} Frames
+                        </h4>
+
+                        <!-- Next Icon -->
+                        {% if next_image %}
+                        <a
+                            href="{% url 'process_images' next_image.name %}?surveyId={{ survey_id }}&roadId={{ road_id }}&model_type={{ model_type }}">
+                            <button id="nextImageButton" class="btn position-absolute" style="
+										top: 50%;
+										right: 20px;
+										transform: translateY(-50%);
+										z-index: 1;
+									">
+                                <img src="{% static 'ra_testing/icons/right_icon.png' %}" alt="Next"
+                                    style="height: 30px; width: 30px" />
+                            </button>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-center d-flex flex-column text-center" style="
+								flex-basis: 25%;
+								max-height: 600px;
+								overflow-y: auto;
+								font-size: 0.9rem;
+							">
+                        <div class="container-fluid d-flex flex-column text-center">
+                            <!-- <h5 class="text-center mb-4" style="font-size: 1.2rem">
+                                CONTROLLER SETTINGS
+                            </h5> -->
+
+                            <div class="row p-2 d-flex flex-column justify-content-around align-items-center">
+                                <div class="container-fluid">
+                                    <!-- First Row -->
+                                    <div class="row mb-3" style="display: none;">
+                                        <div class="col-md-4">
+                                            <label for="surveyId" class="form-label" style="font-size: 0.8rem">Insert
+                                                Survey Id</label>
+                                            <input type="number" id="surveyId" name="surveyId" class="form-control"
+                                                value="{{survey_id}}" disabled style="font-size: 0.9rem" />
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="roadId" class="form-label" style="font-size: 0.8rem">Insert Road
+                                                Id</label>
+                                            <input type="number" id="roadId" name="roadId" class="form-control"
+                                                value="{{road_id}}" disabled style="font-size: 0.9rem" />
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="categorySelect" class="form-label"
+                                                style="font-size: 0.8rem">Select Model Type</label>
+                                            <select id="categorySelect" class="form-select mb-3" disabled
+                                                style="font-size: 0.9rem">
+                                                <option value="{{ model_type }}" selected disabled>
+                                                    {{ model_type }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Second Row -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="labelSelect" class="form-label" style="font-size: 0.8rem">Select
+                                                Label</label>
+                                            <select id="labelSelect" class="form-select mb-3" style="
+														font-size: 0.9rem;
+													"></select>
+                                        </div>
+
+                                        <div class="col-md-6 d-flex align-items-center" style="font-size: 0.8rem">
+                                            <h5 class="me-2" style="font-size: 0.8rem">
+                                                Set Image Resolution
+                                            </h5>
+                                            <select id="resolutionSelect" class="form-select" disabled
+                                                style="font-size: 0.9rem">
+                                                <option value="1080x720" selected>
+                                                    1280x1080
+                                                </option>
+                                                <option value="720x480">
+                                                    720x480
+                                                </option>
+                                                <option value="1280x1080">
+                                                    1280x1080
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div id="anomalyFormContainer" class="container mt-5"> -->
+                                <!-- Dynamically created forms will be appended here -->
+                            </div>
+                        </div>
+
+                        <input type="text" style="
+									height: 50px;
+									width: 100%;
+									margin-bottom: 10px;
+									font-size: 0.9rem;
+									padding: 10px;
+									border-radius: 5px;
+									border: 1px solid #ccc;
+								" id="searchBox" placeholder="Enter JSON key to search (e.g., 2024-11-13 13:43:00)" />
+
+                        <div id="jsonContainer"></div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ anomaly_data|json_script:"anomaly-data-json" }}
+
+        <!-- buttons container -->
+        <div class="d-flex btns-div justify-content-around align-items-center">
+
+            <!-- <div class="text-center position-absolute">
+                <a href="{% url 'upload_images'  %}" class="btn btn-success position-absolute"
+                    style="top: 10px; width: 150px">
+                    Go Back
+                </a>
+            </div> -->
+
+            <button id="go_back_btn" class="btn btn-success">
+                <a href="{% url 'upload_images'  %}" class="btn btn-success">
+                    Menu
+                </a>
+                <!-- style="top: 10px; width: 150px" -->
+            </button>
+
+            <button id="editImageButton" class="btn btn-primary">
+                Edit
+            </button>
+            <button id="undoBoundingBox" class="btn btn-secondary" disabled>
+                Undo
+            </button>
+            <!-- <button id="upload2s3" class="btn btn-danger">Upload to s3</button> -->
+            <button id="patchJsonBtn" class="btn btn-danger">
+                Patch Frame
+            </button>
+            <button id="downloadJsonButton" class="btn btn-warning">
+                Download Json
+            </button>
+            <button id="deleteJson" class="btn btn-success">
+                Clear json data
+            </button>
+            <button id="downloadImageButton" class="btn btn-success">
+                Download Image
+            </button>
+            <button id="downloadMergedJson" class="btn btn-primary">
+                Download Merged Json
+            </button>
+            <!-- {% comment %} <button id="downloadGpxFile" class="btn btn-success">Download Gpx Json file</button> {% endcomment %} -->
+
+            <form id="uploadForm" class="flex-column border px-2" enctype="multipart/form-data">
+                <label for="gpxJson">Upload GPX Json :</label>
+                <input type="file" id="gpxJson" name="gpxJson" accept=".json" required />
+
+                <!-- Existing Checkbox (Keep this if you want) -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="addTimeOffset" />
+                    <label class="form-check-label" for="addTimeOffset" style="font-size: 0.9rem">
+                        Add +5:30 (IST Conversion during Upload)
+                    </label>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <!-- Existing Upload Button -->
+                    <button type="button" id="uploadGpxJson" class="btn btn-success">
+                        Upload GPX JSON
+                    </button>
+
+                    <!-- NEW BUTTON: Convert Displayed Time -->
+                    <button type="button" id="convertDisplayedTimeBtn" class="btn btn-info text-white">
+                        Convert Displayed Time (+5:30)
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- anomaly box  -->
+        <div class="card anomnaly-box bg-red shadow-sm mt-2"></div>
+
+    </div>
+
+    {% comment %} downlaod the json file {% endcomment %}
+
+    <!-- scripts used  -->
+    <script src="{% static 'ra_testing/js/process_api.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'ra_testing/js/process_canva.js' %}"></script>
+    <script>
+        const anomalyDataString =
+            document.getElementById('anomaly-data-json').textContent;
+
+        // Attach the parsed object to the global window scope.
+        // Now, any script that runs after this will be able to find window.anomalyData.
+        window.anomalyData = JSON.parse(anomalyDataString);
+
+        console.log(
+            'anomalyData has been attached to the window object:',
+            window.anomalyData,
+        );
+        image.src = '{{ current_image.url }}';
+
+        subdomain = '{{ subdomain }}';
+
+        current_img_path = '{{ current_image.url }}';
+        left_icon_src = "{% static 'ra_testing/icons/left_icon.png' %}";
+        right_icon_src = "{% static 'ra_testing/icons/right_icon.png' %}";
+    </script>
+
+</body>
+
+</html>

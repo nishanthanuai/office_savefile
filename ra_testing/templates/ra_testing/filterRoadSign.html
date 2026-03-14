@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Figures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, rgb(255, 255, 255) 0%, rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(67, 115, 131, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 1.8rem;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 0;
+            font-size: 2rem;
+            color: #437383;
+            /* Updated to match previous theme */
+        }
+
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            align-items: center;
+
+        }
+
+        form div {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        textarea:focus {
+            border-color: #437383;
+            outline: none;
+        }
+
+
+        input[type="text"] {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        input[type="text"]:focus {
+            border-color: #437383;
+            outline: none;
+        }
+
+        .btn {
+            position: absolute;
+            left: 1%;
+            background-color: var(--btn-menu-bg);
+            color: var(--btn-menu-text);
+            padding: 0.7rem 1.4rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s ease;
+            justify-self: flex-start;
+            border: 1px solid var(--input-border);
+        }
+
+        .btn:hover {
+            background-color: var(--btn-menu-hover-bg);
+            color: var(--btn-menu-hover-text);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="btn">← Menu</a>
+        <h1>Download Filtered Road Sign Data</h1>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Enter Figure Numbers</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div>
+                    <label for="figures">Figure Numbers (comma-separated):</label>
+                    <textarea name="figures" id="figures" rows="3" placeholder="e.g. 14.02, 15.05a" required></textarea>
+                </div>
+                <button type="submit" class="btn">Download Excel</button>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

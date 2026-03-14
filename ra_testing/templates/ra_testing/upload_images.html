@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+</head>
+
+<style>
+    :root {
+        /* Main Layout */
+        --bg-body: #F8FAFC;
+        /* Soft White background */
+        --card-bg: #FFFFFF;
+        /* Pure White cards */
+        --card-border: #E2E8F0;
+        /* Light Gray borders */
+        /* Typography */
+        --text-primary: #0F172A;
+        /* Near Black for headings/main text */
+        --text-muted: #475569;
+        /* Muted Gray for secondary text */
+        /* Action Colors */
+        --btn-primary: #2563EB;
+        /* Slate Blue */
+        --btn-accent: #14B8A6;
+        /* Teal */
+        --hover-bg: #DBEAFE;
+        /* Soft Blue hover state */
+        /* Functional States */
+        --success: #16A34A;
+        --warning: #D97706;
+        --error: #DC2626;
+    }
+
+[data-theme="dark"] {
+    --bg-body: #121212;
+    --text-primary: #e6e6e6;
+    --text-muted: #9a9a9a;
+    --card-bg: #1c1c1c;
+    --card-border: #2a2a2a;
+    --hover-bg: rgba(255, 255, 255, 0.05);
+}
+
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--bg-body);
+        color: var(--text-primary);
+        transition: background 0.3s ease, color 0.3s ease;
+        height: 100vh;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        color: var(--text-primary);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Dark mode overrides for Bootstrap controls */
+    [data-theme="dark"] .form-control,
+    [data-theme="dark"] .form-select {
+        background-color: var(--card-bg);
+        border-color: var(--card-border);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .form-control:focus,
+    [data-theme="dark"] .form-select:focus {
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    [data-theme="dark"] hr {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .card-img-top {
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .container {
+        min-width: 90%;
+        height: 100%;
+    }
+
+    .col-lg-5 {
+        width: 30%;
+    }
+
+    .col-lg-7 {
+        width: 70%;
+    }
+
+    .theme-toggle-btn {
+        border-radius: 50px;
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .sticky-controls {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+
+    /* Use the Primary Blue for your main buttons */
+    .btn-primary {
+        background-color: var(--btn-primary);
+        border-color: var(--btn-primary);
+    }
+
+    /* Use the Teal for 'Fetch' or 'Process' buttons */
+    .btn-info,
+    .btn-success {
+        background-color: var(--btn-accent);
+        border-color: var(--btn-accent);
+    }
+    #go_back_btn,
+    #theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        font-size: 1.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Default (Light Mode) */
+        background-color: var(--card-bg);
+        color: var(--text-muted);
+        border: 1px solid var(--card-border);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    #theme-toggle:hover {
+        background-color: var(--hover-bg);
+        color: var(--btn-primary);
+        border-color: var(--btn-primary);
+        transform: translateX(-2px);
+        /* Subtle nudge to indicate the "back" direction */
+    }
+
+    /* Dark Mode Specific Adjustments */
+    [data-theme="dark"] #theme-toggle {
+        background-color: var(--card-bg);
+        border-color: var(--card-border);
+        color: var(--text-muted);
+        box-shadow: none;
+    }
+
+    [data-theme="dark"] #theme-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        /* Brighter white for better contrast on hover */
+        border-color: var(--text-muted);
+    }
+</style>
+
+<body>
+
+    <!-- Alert Placeholder -->
+    <div id="alertPlaceholder" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+    <div class="container">
+        <header>
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="/" class="btn btn-sm btn-outline-secondary" id="go_back_btn">← Menu</a>
+                <div></div>
+                <div class="text-center">
+                    <h1 class="display-5 fw-bold">Image Management Dashboard</h1>
+                    <p class="lead text-muted">Upload, view, and process your road survey images.</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary theme-toggle-btn" id="theme-toggle">
+                        <span id="theme-icon">🌙</span> Dark Mode
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-5">
+            <!-- Left Column: Controls -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">Control Panel</h4>
+                        <!-- ID is important here -->
+                        <form id="manageImagesForm" method="post" enctype="multipart/form-data"
+                            action="{% url 'upload_images' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="surveyId" class="form-label">Survey ID</label>
+                                <input type="number" id="surveyId" name="surveyId" value="{{ survey_id }}"
+                                    class="form-control" required placeholder="e.g., 123">
+                            </div>
+                            <div class="mb-3">
+                                <label for="roadId" class="form-label">Road ID</label>
+                                <input type="number" id="roadId" name="roadId" value="{{ road_id }}"
+                                    class="form-control" required placeholder="e.g., 456">
+                            </div>
+                            <div class="mb-4">
+                                <label for="model_type" class="form-label">Model Type</label>
+                                <select id="model_type" name="model_type" class="form-select">
+                                    <option value="pavement">Pavement</option>
+                                    <option value="furniture" selected>Furniture</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="uploadSection">
+                                <label for="imageUpload" class="form-label">Choose Images to Upload</label><br>
+                                <hr>
+                                <label for="imageUpload" class="form-label text-muted">Select an entire folder.</label>
+                                <input class="form-control" type="file" id="imageUpload" name="images_folder"
+                                    webkitdirectory directory multiple>
+                                <hr>
+                                <label for="imageUploadMultiple" class="form-label text-muted">Select multiple
+                                    images.</label>
+                                <input class="form-control" type="file" id="imageUploadMultiple" name="images_multiple"
+                                    multiple>
+                            </div>
+
+                            <div class="progress mt-3" id="progressBarContainer" style="display: none;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                    role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                                    aria-valuemax="100">0%</div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary" id="uploadBtn">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                        style="display: none;"></span>
+                                    Upload Images
+                                </button>
+                                <button type="button" class="btn btn-info" id="fetchImagesBtn">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                        style="display: none;"></span>
+                                    Fetch & Display Images
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm sticky-controls">
+                    <div class="card-body p-4">
+                        <h5 class="card-title">Advanced Operations</h5>
+                        <div class="d-grid gap-2">
+                            <button id="processImagesBtn" class="btn btn-success">Process All Images</button>
+                            <button type="button" class="btn btn-danger" id="deleteImagesBtn">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                    style="display: none;"></span>
+                                Delete All Images
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Image Gallery -->
+            <div class="col-lg-7">
+                <div id="imageGallery" class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-2">Image Gallery</h4>
+                        <div class="row" id="imageGrid">
+                            <div class="col-12 text-center text-muted mt-5">
+                                <p>Click "Fetch & Display Images" to see your uploads.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'ra_testing/js/upload_data.js' %}"></script>
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.getElementById('htmlRoot');
+
+        function applyTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeToggle.innerHTML = '<span id="theme-icon">☀️</span> Light Mode';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeToggle.innerHTML = '<span id="theme-icon">🌙</span> Dark Mode';
+            }
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
+
+</body>
+
+</html>

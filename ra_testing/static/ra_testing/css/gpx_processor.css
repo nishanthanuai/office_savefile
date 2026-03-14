@@ -1,0 +1,202 @@
+ /* 
+     
+          --------------
+          Global Styles
+          --------------
+        
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          padding: 20px;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #d0f5dd, #a7ebc9);
+          min-height: 100vh;
+        }
+
+        
+          --------------
+          Typography
+          --------------
+        
+        h1 {
+          color: #0b6b3f;
+          margin-bottom: 1.5rem;
+          font-size: 1.8rem;
+          font-weight: 600;
+          text-align: center;
+        }
+
+        h2 {
+          color: #0b6b3f;
+          margin: 1rem 0;
+          font-size: 1.4rem;
+        }
+
+        p {
+          margin-bottom: 1rem;
+          line-height: 1.5;
+          color: #333;
+        }
+
+       
+          --------------
+          Containers
+          --------------
+      
+        .upload-container, .map-container {
+          background-color: #ffffff;
+          width: 90%;
+          max-width: 1200px;
+          padding: 2rem 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          margin: 2rem auto;
+        }
+
+        .upload-container {
+          max-width: 600px;
+        }
+
+        
+        form {
+          margin: 1rem 0;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+          width: 100%;
+          padding: 0.8rem;
+          margin: 0.5rem 0;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 1rem;
+        }
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #0b6b3f;
+          font-weight: 500;
+        }
+
+        /
+        .btn-upload,
+        #downloadButton,
+        button[type="submit"] {
+          background-color: #0b6b3f;
+          color: white;
+          padding: 0.8rem 1.5rem;
+          border: none;
+          border-radius: 4px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: inline-block;
+        }
+
+        .btn-upload:hover,
+        #downloadButton:hover,
+        button[type="submit"]:hover {
+          background-color: #094d2e;
+          transform: translateY(-2px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-upload:active,
+        #downloadButton:active,
+        button[type="submit"]:active {
+          transform: translateY(0);
+        }
+
+        
+        #map {
+          width: 100%;
+          height: 600px;
+          border: 2px solid #ccc;
+          border-radius: 8px;
+          margin-bottom: 1.5rem;
+        }
+
+        .distance-label {
+          background-color: rgba(255, 255, 255, 0.9);
+          border: 1px solid #0b6b3f;
+          border-radius: 4px;
+          padding: 2px 6px;
+          font-size: 14px;
+          pointer-events: none;
+        }
+
+      
+        .table-container {
+          max-height: 300px;
+          overflow-y: auto;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          margin: 1rem 0;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: white;
+        }
+
+        th, td {
+          padding: 0.8rem;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        th {
+          background-color: #f5f5f5;
+          color: #0b6b3f;
+          font-weight: 600;
+        }
+
+        tr:hover {
+          background-color: #f9f9f9;
+        }
+
+      
+        @media (max-width: 768px) {
+          body {
+            padding: 10px;
+          }
+
+          .upload-container,
+          .map-container {
+            width: 95%;
+            padding: 1rem;
+          }
+
+          #map {
+            height: 400px;
+          }
+
+          h1 {
+            font-size: 1.5rem;
+          }
+
+          .btn-upload,
+          #downloadButton,
+          button[type="submit"] {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+          }
+        }
+
+        
+        .text-center {
+          text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+*/

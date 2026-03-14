@@ -1,0 +1,231 @@
+<!doctype html>
+{% load static %}
+<html lang="en" id="htmlRoot">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Viewer</title>
+    <!-- css and cdn js  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'ra_testing/css/process_img.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
+</head>
+
+<body>
+
+    <div class="app-shell">
+        <!-- Hidden Inputs for JS -->
+        <div style="display: none;">
+            <input type="number" id="surveyId" name="surveyId" value="{{survey_id}}" />
+            <input type="number" id="roadId" name="roadId" value="{{road_id}}" />
+            <select id="categorySelect">
+                <option value="{{ model_type }}" selected>{{ model_type }}</option>
+            </select>
+        </div>
+
+        <header class="app-header">
+            <div class="theme_and_menu"><a href="{% url 'upload_images' %}" id="go_back_btn">← Menu</a>
+                <button id="theme-toggle" title="Toggle Dark Mode">
+                    <span id="theme-icon">🌙</span> Dark Mode
+                </button>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="m-0" style="font-size: 3rem;">Image Viewer</h1>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="badge bg-primary">Survey: {{survey_id}}</span>
+                <span class="badge bg-secondary">Road: {{road_id}}</span>
+            </div>
+        </header>
+
+        <main class="app-workspace">
+
+            <section class="canvas-area">
+                <div class="frame-counter">Frame: {{current_frame_number}} Out Of {{total_frames}} Frames</div>
+
+                {% if previous_image %}
+                <a href="{% url 'process_images' previous_image.name %}?surveyId={{ survey_id }}&roadId={{ road_id }}&model_type={{ model_type }}&precalculated_ts={{ prev_timestamp|urlencode }}"
+                    class="nav-btn nav-left" id="prevImageButton" data-ts="{{ prev_timestamp }}">
+                    <img src="{% static 'ra_testing/icons/left_icon.png' %}" alt="Prev" />
+                </a>
+
+                {% endif %}
+
+                <canvas id="imageCanvas"></canvas>
+
+                {% if next_image %}
+                <a href="{% url 'process_images' next_image.name %}?surveyId={{ survey_id }}&roadId={{ road_id }}&model_type={{ model_type }}&precalculated_ts={{ next_timestamp|urlencode }}"
+                    class="nav-btn nav-right" id="nextImageButton" data-ts="{{ next_timestamp }}">
+                    <img src="{% static 'ra_testing/icons/right_icon.png' %}" alt="Next" />
+                </a>
+
+                {% endif %}
+
+
+            </section>
+
+            <aside class="sidebar-area">
+                <div class="sidebar-section">
+                    <h3 class="mb-3" style="font-size: 2rem;">Controller Settings</h3>
+
+                    <div>
+                        <label for="resolutionSelect" class="form-label" style="font-size: 1.5rem;">Resolution</label>
+                        <select id="resolutionSelect" class="form-select form-select-sm" disabled>
+                            <option value="1280x1080" selected>1280x1080</option>
+                            <option value="720x480">720x480</option>
+                            <option value="1080x720">1080x720</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="labelSelect" class="form-label" style="font-size: 1.5rem;">Select Label</label>
+                        <select id="labelSelect" class="form-select form-select-sm"></select>
+                    </div>
+                    <button id="editImageButton" class="btn btn-sm btn-primary">Edit</button>
+                    <button id="undoBoundingBox" class="btn btn-sm btn-secondary" disabled>Undo</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <input type="text" id="searchBox" class="form-control form-control-sm"
+                        placeholder="Search JSON key (e.g. 2024-11-13)..." value="{{ fetched_timestamp_from_image }}">
+                    <!-- Add this button -->
+                    <button id="copyTimeBtn" class="btn btn-sm btn-primary mt-2 w-100" style="font-size: 1.5rem;">
+                        Use this Timestamp </button>
+
+                </div>
+
+                <div id="jsonContainer">
+                    <!-- JSON Data will populate here -->
+                </div>
+            </aside>
+        </main>
+
+        <footer class="app-footer">
+
+            <div class="action-group">
+                <!-- <button id="editImageButton" class="btn btn-sm btn-primary">Edit</button>
+                <button id="undoBoundingBox" class="btn btn-sm btn-secondary" disabled>Undo</button> -->
+                <button id="patchJsonBtn" class="btn btn-sm btn-danger">Patch To Dashboard</button>
+            </div>
+
+            <div class="action-group">
+                <button id="downloadJsonButton" class="btn btn-sm btn-warning">Download Json</button>
+                <button id="downloadMergedJson" class="btn btn-sm btn-info text-white">Download Merged Json</button>
+                <button id="downloadImageButton" class="btn btn-sm btn-success">Download Image</button>
+                <button id="deleteJson" class="btn btn-sm btn-danger">Clear JSON</button>
+            </div>
+
+            <div class="action-group">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <input type="file" id="gpxJson" name="gpxJson" accept=".json" class="form-control form-control-sm"
+                        style="width: 40%;" required />
+                    <div class="form-check m-0">
+                        <input class="form-check-input" type="checkbox" id="addTimeOffset" />
+                        <label class="form-check-label" for="addTimeOffset" style="font-size: 0.85rem;">+5:30</label>
+                    </div>
+                    <button type="button" id="uploadGpxJson" class="btn btn-sm btn-success">Upload GPX</button>
+                    <button type="button" id="convertDisplayedTimeBtn" class="btn btn-sm btn-info text-white">Convert
+                        Time</button>
+                </form>
+            </div>
+
+        </footer>
+
+
+
+    </div>
+    <!-- Dynamic anomaly forms will appear here -->
+    <div class="card anomnaly-box shadow-sm"></div>
+
+    {{ anomaly_data|json_script:"anomaly-data-json" }}
+
+    <!-- scripts used  -->
+    <script src="{% static 'ra_testing/js/process_api.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'ra_testing/js/process_canva.js' %}"></script>
+    <script>
+        const anomalyDataString = document.getElementById('anomaly-data-json').textContent;
+        window.anomalyData = JSON.parse(anomalyDataString);
+        // Sequential Numbering Offsets
+        window.totalExistingAssets = Number("{{ total_existing_assets|default:0 }}");
+        window.totalExistingAnomalies = Number("{{ total_existing_anomalies|default:0 }}");
+
+        // Add these two new variables:
+        window.currentFrameNumber = Number("{{ current_frame_number|default:1 }}");
+        window.modelType = '{{ model_type }}';
+
+
+
+
+        image.src = '{{ current_image.url }}';
+        subdomain = '{{ subdomain }}';
+        current_img_path = '{{ current_image.url }}';
+        left_icon_src = "{% static 'ra_testing/icons/left_icon.png' %}";
+        right_icon_src = "{% static 'ra_testing/icons/right_icon.png' %}";
+
+        // --- Dark Mode Logic ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.getElementById('htmlRoot');
+
+        function applyTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeToggle.innerHTML = '<span id="theme-icon">☀️</span> Light Mode';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeToggle.innerHTML = '<span id="theme-icon">🌙</span> Dark Mode';
+            }
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    </script>
+    <script>
+        document.getElementById('copyTimeBtn').addEventListener('click', () => {
+            // 1. Get the value from the search box
+            const searchVal = document.getElementById('searchBox').value;
+
+            if (!searchVal) {
+                alert("Please enter or select a timestamp in the search box first.");
+                return;
+            }
+
+            // 2. Update the global session so any FUTURE boxes you draw also get this timestamp
+            if (typeof EDITING_SESSION !== 'undefined') {
+                EDITING_SESSION.timestamp = searchVal;
+            }
+
+            // 3. Find ALL timestamp input fields (class 'ts') across all anomaly boxes
+            const allTsInputs = document.querySelectorAll('.ts');
+
+            if (allTsInputs.length > 0) {
+                allTsInputs.forEach(tsInput => {
+                    // Update the value for each box
+                    tsInput.value = searchVal;
+
+                    // Trigger the 'input' event to automatically update 
+                    // Lat/Lng/Distance for each box via process_canva.js
+                    tsInput.dispatchEvent(new Event('input'));
+                });
+                console.log(`Timestamp "${searchVal}" applied to all ${allTsInputs.length} anomaly boxes!`);
+            } else {
+                alert("No anomaly boxes found. Please draw at least one box first.");
+            }
+        });
+    </script>
+
+</body>
+
+</html>

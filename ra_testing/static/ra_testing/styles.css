@@ -1,0 +1,118 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b9fbc0 100%);
+    color: #333;
+}
+
+header {
+    background-color: #00796b;
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+main {
+    padding: 5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.environment-selector {
+    margin-bottom: 3rem; /* Adds space below the selector */
+    text-align: center; /* Center aligns the form */
+}
+
+.environment-selector form {
+    display: inline-block; /* Centers the form */
+}
+
+.environment-selector label {
+    font-size: 1.125rem; /* Increases font size */
+    margin-right: 1rem; /* Space between label and select */
+    font-weight: bold; /* Makes the font bold */
+    font-family: 'Roboto', sans-serif; /* Sets the font family */
+}
+
+#environment {
+    padding: 0.5rem 1rem; /* Adds padding for better click area */
+    font-size: 1rem; /* Adjust font size */
+    border: 2px solid #00796b; /* Solid border matching the theme */
+    border-radius: 8px; /* Rounded corners */
+    appearance: none; /* Removes default styling */
+    cursor: pointer; /* Changes cursor to pointer */
+    transition: border-color 0.3s ease; /* Smooth border color transition */
+}
+
+#environment:hover,
+#environment:focus {
+    border-color: #004d40; /* Darker border color on hover/focus */
+}
+
+.container-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* Creates 3 equal columns */
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 4rem;
+}
+
+.container {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background-color: #f9f9f9;
+}
+
+.container h2 {
+    margin-top: 0;
+    font-size: 2.25rem;
+    color: #004d40;
+    border-bottom: 3px solid #00796b;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.container p {
+    color: #666;
+    margin: 1.5rem 0;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #004d40;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 12px;
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    background-color: #00332e;
+    transform: scale(1.05);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+}

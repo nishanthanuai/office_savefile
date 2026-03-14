@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Assets</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtVXosLTQjTMVm2K9BJf55HZAkNAGTr4U"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg,rgb(255, 255, 255) 0%,rgb(226, 226, 226) 30%, rgb(212, 212, 212) 63%, rgb(198, 198, 198) 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Header Styles */
+        header {
+            background: #437383;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        /* Main Content Styles */
+        main {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            border-bottom: 3px solid #437383;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            color: #437383;
+            font-weight: 500;
+        }
+        button {
+            background-color: #437383;
+            color: #fff;
+            display: inline-block;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #72A2B3;
+            color: #000;
+        }
+        /* Form Styles */
+        #uploadForm {
+            margin-bottom: 30px;
+        }
+
+        #uploadForm input[type="file"] {
+            border: 1px solid #437383;
+            padding: 12px;
+            border-radius: 5px;
+            background: #fff;
+            margin-right: 15px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+
+        /* Map Styles */
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        /* InfoWindow Styles */
+        .delete-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 18px;
+            padding: 5px;
+            z-index: 1;
+        }
+
+        .delete-icon:hover {
+            background: #c82333;
+        }
+
+        /* Download Button Styles */
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 5px;
+            background-color: var(--button-color, #007bff); /* Default color if not set */
+        }
+
+        .download-button:hover {
+            background-color: var(--button-color-hover, #0056b3);
+            transform: scale(1.05);
+        }
+
+        .download-button:active {
+            background-color: var(--button-color-active, #004085);
+            transform: scale(1.02);
+        }
+
+        /* Download Links Styles */
+        #downloadLinks a {
+            display: block;
+            margin: 20px 0;
+            text-decoration: none;
+            color: whitesmoke;
+            font-size: 1.1em;
+        }
+
+        #downloadLinks a:hover {
+            text-decoration: underline;
+        
+            #fileList {
+                margin-top: 20px;
+            }
+    
+            .file-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+    
+            .file-item button {
+                margin-left: 10px;
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+    
+            .file-item button:hover {
+                background-color: #c82333;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Asset Management</h1>
+        </header>
+        <main>
+            <section>
+                <h2>Upload JSON Files</h2>
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="json_files" multiple accept=".json">
+                    <button type="submit">Upload</button>
+                </form>
+            </section>
+    
+            <section>
+                <h2>Map with Assets</h2>
+                <div id="map"></div>
+            </section>
+            <section>
+                <h2>Download Updated JSON Files</h2>
+                <div id="downloadLinks"></div>
+            </section>
+            <section>
+                <h2>Remove Uploaded Files</h2>
+                <div id="fileList"></div>
+            </section>
+
+        </main>
+    
+        <script>
+            var map;
+            var currentInfoWindow = null;
+            var colors = ['#FF0000', '#0000FF', '#00FF00', '#FFA500', '#800080', '#00FFFF'];
+            var fileIndex = 0;
+            var assetsByFile = {};
+            var anomaliesByFile = {};
+            var fileNames = {};
+            var markers = {};  // Track markers by fileId and asset number
+            var colorIndex = 0;  // Track the current color index
+    
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 16.362667167, lng: 80.8717055 },
+                    zoom: 15
+                });
+            }
+    
+            function addMarker(asset, color, fileId) {
+                if (!markers[fileId]) {
+                    markers[fileId] = {};
+                }
+    
+                var marker = new google.maps.Marker({
+                    position: { lat: asset.Latitude, lng: asset.Longitude },
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 7,
+                        fillColor: color,
+                        fillOpacity: 1,
+                        strokeWeight: 0
+                    }
+                });
+    
+                markers[fileId][asset['Assets number']] = marker;  // Store the marker using asset number as key
+    
+                var infoWindowContent = `
+                    <div style="position: relative;">
+                        <button class="delete-icon" onclick="deleteAsset('${fileId}', ${asset['Assets number']}, this)"><i class="fas fa-trash"></i></button>
+                        <img src="${asset.image}" alt="Asset Image" style="width:500px; height:auto;"><br>
+                        <strong>Asset Type:</strong> ${asset["Asset type"]} <br>
+                        <strong>Side:</strong> ${asset.Side} <br>
+                        <strong>Category:</strong> ${asset.category} <br>
+                    </div>`;
+    
+                var infoWindow = new google.maps.InfoWindow({
+                    content: infoWindowContent
+                });
+    
+                marker.addListener('click', function() {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+    
+                    infoWindow.open(map, marker);
+                    currentInfoWindow = infoWindow;
+                });
+            }
+    
+            function deleteAsset(fileId, assetNumber, button) {
+                // Remove asset from the assetsByFile object
+                var fileAssets = assetsByFile[fileId];
+                assetsByFile[fileId] = fileAssets.filter(asset => asset['Assets number'] !== assetNumber);
+    
+                // Remove specific marker from the map
+                var marker = markers[fileId][assetNumber];
+                if (marker) {
+                    marker.setMap(null);  // Remove marker from the map
+                    delete markers[fileId][assetNumber];  // Remove the marker from the tracking object
+                }
+    
+                // Update download links
+                updateDownloadLinks();
+    
+                // Save state
+                saveToLocalStorage();
+            }
+    
+            function removeFile(fileId) {
+                // Remove all markers related to the file
+                if (markers[fileId]) {
+                    Object.values(markers[fileId]).forEach(marker => marker.setMap(null));
+                    delete markers[fileId];
+                }
+    
+                // Remove file data from assets and anomalies
+                delete assetsByFile[fileId];
+                delete anomaliesByFile[fileId];
+                delete fileNames[fileId];
+    
+                // Update file list
+                updateFileList();
+    
+                // Update download links
+                updateDownloadLinks();
+    
+                // Save state
+                saveToLocalStorage();
+            }
+    
+            function updateFileList() {
+                var fileList = document.getElementById('fileList');
+                fileList.innerHTML = '';  // Clear existing list
+    
+                Object.keys(fileNames).forEach(fileId => {
+                    var fileName = fileNames[fileId];
+                    var fileItem = document.createElement('div');
+                    fileItem.classList.add('file-item');
+                    fileItem.innerHTML = `
+                        <span>${fileName}</span>
+                        <button onclick="removeFile('${fileId}')">Remove</button>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+    
+            function updateDownloadLinks() {
+                var downloadLinks = document.getElementById('downloadLinks');
+                downloadLinks.innerHTML = '';  // Clear existing links
+    
+                Object.keys(assetsByFile).forEach(fileId => {
+                    var color = colors[fileId % colors.length];
+                    var blob = new Blob([JSON.stringify({
+                        anomalies: anomaliesByFile[fileId] || [],
+                        assets: assetsByFile[fileId]
+                    }, null, 2)], { type: 'application/json' });
+    
+                    var url = URL.createObjectURL(blob);
+                    var link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileNames[fileId];
+                    link.textContent = `Download Updated File ${fileNames[fileId]}`;
+                    link.classList.add('download-button');
+                    
+                    // Set dynamic background color based on marker color
+                    link.style.setProperty('--button-color', color);
+                    link.style.setProperty('--button-color-hover', shadeColor(color, -10));
+                    link.style.setProperty('--button-color-active', shadeColor(color, -20));
+                    
+                    downloadLinks.appendChild(link);
+                });
+            }
+    
+            function shadeColor(color, percent) {
+                var R = parseInt(color.substring(1, 3), 16);
+                var G = parseInt(color.substring(3, 5), 16);
+                var B = parseInt(color.substring(5, 7), 16);
+    
+                R = Math.round(R * (100 + percent) / 100);
+                G = Math.round(G * (100 + percent) / 100);
+                B = Math.round(B * (100 + percent) / 100);
+    
+                R = (R < 255) ? R : 255;
+                G = (G < 255) ? G : 255;
+                B = (B < 255) ? B : 255;
+    
+                var RR = ((R.toString(16).length === 1) ? '0' : '') + R.toString(16);
+                var GG = ((G.toString(16).length === 1) ? '0' : '') + G.toString(16);
+                var BB = ((B.toString(16).length === 1) ? '0' : '') + B.toString(16);
+    
+                return `#${RR}${GG}${BB}`;
+            }
+    
+            function saveToLocalStorage() {
+                localStorage.setItem('assetsByFile', JSON.stringify(assetsByFile));
+                localStorage.setItem('anomaliesByFile', JSON.stringify(anomaliesByFile));
+                localStorage.setItem('fileNames', JSON.stringify(fileNames));
+                localStorage.setItem('fileIndex', JSON.stringify(fileIndex));
+                localStorage.setItem('colorIndex', JSON.stringify(colorIndex));
+            }
+    
+            document.addEventListener('DOMContentLoaded', function () {
+                initMap();
+    
+                // Retrieve saved data
+                var savedAssets = localStorage.getItem('assetsByFile');
+                var savedAnomalies = localStorage.getItem('anomaliesByFile');
+                var savedFileNames = localStorage.getItem('fileNames');
+                var savedFileIndex = localStorage.getItem('fileIndex');
+                var savedColorIndex = localStorage.getItem('colorIndex');
+    
+                if (savedAssets) {
+                    assetsByFile = JSON.parse(savedAssets);
+                }
+                if (savedAnomalies) {
+                    anomaliesByFile = JSON.parse(savedAnomalies);
+                }
+                if (savedFileNames) {
+                    fileNames = JSON.parse(savedFileNames);
+                }
+                if (savedFileIndex) {
+                    fileIndex = JSON.parse(savedFileIndex);
+                }
+                if (savedColorIndex) {
+                    colorIndex = JSON.parse(savedColorIndex);
+                }
+    
+                // Add markers and update links based on saved data
+                Object.keys(assetsByFile).forEach(fileId => {
+                    var color = colors[fileId % colors.length];
+                    assetsByFile[fileId].forEach(asset => {
+                        addMarker(asset, color, fileId);
+                    });
+                });
+                updateFileList();
+                updateDownloadLinks();
+            });
+    
+            document.getElementById('uploadForm').onsubmit = function (event) {
+                event.preventDefault();
+    
+                var formData = new FormData(this);
+                fetch('', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var startIndex = fileIndex;
+    
+                    data.files.forEach((file, index) => {
+                        var color = colors[colorIndex % colors.length];
+                        colorIndex++;  // Move to the next color for the next file
+    
+                        var fileAssets = file.assets;
+                        var fileAnomalies = file.anomalies;
+    
+                        fileNames[fileIndex] = data.file_names[index];
+                        assetsByFile[fileIndex] = fileAssets;
+                        anomaliesByFile[fileIndex] = fileAnomalies || [];
+    
+                        file.assets.forEach(asset => {
+                            addMarker(asset, color, fileIndex);
+                        });
+    
+                        fileIndex++;
+                    });
+    
+                    // Save state
+                    saveToLocalStorage();
+    
+                    // Update file list and download links after files are loaded
+                    updateFileList();
+                    updateDownloadLinks();
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        </script>
+    </body>
+    </html>

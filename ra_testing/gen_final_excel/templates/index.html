@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Processing Pipeline</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+
+        <header>
+            <h1>Final Excel Generator</h1>
+            <p class="subtitle">
+                Enter Survey ID to process the final Excel deliverable dashboard counts
+            </p>
+        </header>
+
+        <!-- CENTERED INPUT -->
+        <div class="center-box">
+            <input type="text" id="surveyId" placeholder="Give me the Survey_id and I'll process it for you!" />
+            <button id="runBtn" onclick="runPipeline()">Run Pipeline</button>
+        </div>
+        <div id="funnyMessageBar" class="funny-bar">
+            <span id="funnyTextInline">Waiting to launch pipeline...</span>
+        </div>
+
+        <div id="statusSection" class="status-section" style="display:none;">
+            <span id="statusText">Starting pipeline...</span>
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="main-grid">
+
+            <!-- LEFT SIDE : VALIDATION -->
+            <div id="validationSection" class="validation-section" style="display:none;">
+
+                <h2>📊 Validation Results</h2>
+
+                <div class="validation-grid">
+                    <div class="validation-card">
+                        <h3>Dashboard (API)</h3>
+                        <pre id="dashboardCounts"></pre>
+                    </div>
+
+                    <div class="validation-card">
+                        <h3>Excel</h3>
+                        <pre id="excelCounts"></pre>
+                    </div>
+                </div>
+
+                <div class="total-counts">
+                    <div class="count-row">
+                        <span>Dashboard Total</span>
+                        <span id="dashboardTotal">0</span>
+                    </div>
+                    <div class="count-row">
+                        <span>Excel Total</span>
+                        <span id="excelTotal">0</span>
+                    </div>
+                </div>
+
+                <div id="validationResult" class="validation-result"></div>
+
+                <button id="downloadBtn" class="download-btn" style="display:none;">
+                    📥 Download Final Excel
+                </button>
+            </div>
+
+            <!-- RIGHT SIDE : LOG CONSOLE -->
+            <div id="logsSection" class="logs-section" style="display:none;">
+                <div class="logs-header">
+                    <h2>🖥 Live Logs</h2>
+                    <button onclick="clearLogs()">Clear</button>
+                </div>
+                <div id="logsContainer" class="logs-container"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
